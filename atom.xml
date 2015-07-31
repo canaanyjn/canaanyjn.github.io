@@ -1,38 +1,69 @@
 <?xml version="1.0" encoding="utf-8"?>
 <feed xmlns="http://www.w3.org/2005/Atom">
-  <title><![CDATA[Hexo]]></title>
+  <title><![CDATA[canaan's blog]]></title>
   
   <link href="/atom.xml" rel="self"/>
   <link href="http://yoursite.com/"/>
-  <updated>2015-05-26T05:04:15.001Z</updated>
+  <updated>2015-07-31T03:27:12.689Z</updated>
   <id>http://yoursite.com/</id>
   
   <author>
-    <name><![CDATA[John Doe]]></name>
+    <name><![CDATA[canaan]]></name>
     
   </author>
   
   <generator uri="http://hexo.io/">Hexo</generator>
   
   <entry>
-    <title><![CDATA[Hello World]]></title>
-    <link href="http://yoursite.com/2015/05/26/hello-world/"/>
-    <id>http://yoursite.com/2015/05/26/hello-world/</id>
-    <published>2015-05-26T05:04:15.001Z</published>
-    <updated>2015-05-26T05:04:15.001Z</updated>
-    <content type="html"><![CDATA[<p>Welcome to <a href="http://hexo.io/" target="_blank" rel="external">Hexo</a>! This is your very first post. Check <a href="http://hexo.io/docs/" target="_blank" rel="external">documentation</a> for more info. If you get any problems when using Hexo, you can find the answer in <a href="http://hexo.io/docs/troubleshooting.html" target="_blank" rel="external">troubleshooting</a> or you can ask me on <a href="https://github.com/hexojs/hexo/issues" target="_blank" rel="external">GitHub</a>.</p>
-<h2 id="Quick_Start">Quick Start</h2><h3 id="Create_a_new_post">Create a new post</h3><figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">$ hexo new <span class="string">"My New Post"</span></span><br></pre></td></tr></table></figure>
-<p>More info: <a href="http://hexo.io/docs/writing.html" target="_blank" rel="external">Writing</a></p>
-<h3 id="Run_server">Run server</h3><figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">$ hexo server</span><br></pre></td></tr></table></figure>
-<p>More info: <a href="http://hexo.io/docs/server.html" target="_blank" rel="external">Server</a></p>
-<h3 id="Generate_static_files">Generate static files</h3><figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">$ hexo generate</span><br></pre></td></tr></table></figure>
-<p>More info: <a href="http://hexo.io/docs/generating.html" target="_blank" rel="external">Generating</a></p>
-<h3 id="Deploy_to_remote_sites">Deploy to remote sites</h3><figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">$ hexo deploy</span><br></pre></td></tr></table></figure>
-<p>More info: <a href="http://hexo.io/docs/deployment.html" target="_blank" rel="external">Deployment</a></p>
+    <title><![CDATA[使用SharedPreferences 需要注意的一点]]></title>
+    <link href="http://yoursite.com/2015/07/31/SharedPreferences%20tips/"/>
+    <id>http://yoursite.com/2015/07/31/SharedPreferences tips/</id>
+    <published>2015-07-31T03:13:47.000Z</published>
+    <updated>2015-07-31T03:27:12.689Z</updated>
+    <content type="html"><![CDATA[<p>SharedPreferences是十分常用的一个工具。前几天在写一个功能的时候，发现在一个Activity中保存的信息在另一个Activity中找不到。一直为空，后来看源码才发现获取SharedPreferences是有两种方式</p>
+<blockquote>
+<ul>
+<li>getPreferences(int mode)</li>
+<li>getSharedPreferences(String name, int mode)</li>
+</ul>
+</blockquote>
+<p>我们先看getPreferences(int mode)源码</p>
+<!-- lang:java-->
+<pre><code>/<span class="keyword">*</span><span class="keyword">*</span>
+ <span class="keyword">*</span> Retrieve a {<span class="comment">@link SharedPreferences} object for accessing preferences</span>
+ <span class="keyword">*</span> that are private to this activity.  This simply calls the underlying
+ <span class="keyword">*</span> {<span class="comment">@link #getSharedPreferences(String, int)} method by passing in this activity's</span>
+ <span class="keyword">*</span> class name as the preferences name.
+ <span class="keyword">*</span>
+ <span class="keyword">*</span> <span class="comment">@param mode Operating mode.  Use {@link #MODE_PRIVATE} for the default</span>
+ <span class="keyword">*</span>             operation, {<span class="comment">@link #MODE_WORLD_READABLE} and</span>
+ <span class="keyword">*</span>             {<span class="comment">@link #MODE_WORLD_WRITEABLE} to control permissions.</span>
+ <span class="keyword">*</span>
+ <span class="keyword">*</span> <span class="comment">@return Returns the single SharedPreferences instance that can be used</span>
+ <span class="keyword">*</span>         to retrieve and modify the preference values.
+ <span class="keyword">*</span>/
+public SharedPreferences getPreferences(int mode) {
+    return getSharedPreferences(getLocalClassName(), mode);
+}
+</code></pre><p>注释中说明了，这个方法获取了一个是当前Activity的私有SharedPreferences对象，并且是获得该类的名字后调用getSharedPreferences(String name, int mode)，将名字作为第一个参数—-名字传入，所以其实在其他activity中使用了当前的activity的类名（不包括包名）也是可以获取的.</p>
+<p>再来讲讲getSharedPreferences(String name, int mode)的第二个参数mode</p>
+<blockquote>
+<ul>
+<li>MODE_PRIVATE(只能自己的应用获取的到，如果已存在就替换)</li>
+<li>MODE_APPEND(只能自己的应用获取的到，如果已存在就接在目前数据之后)</li>
+<li>MODE_WORLD_READABLE(其他应用都能获取的到，可读，但是由于数据不安全，已被废弃)</li>
+<li>MODE_WORLD_WRITEABLE(其他应用都能获取的到，可写，但是由于数据不安全，已被废弃)</li>
+<li>MODE_MULTI_PROCESS(在多进程同时访问一个SharedPreferces使用，在Android2.3之前会自动调用，但是2.3之后就必须手动声明)</li>
+</ul>
+</blockquote>
 ]]></content>
     <summary type="html">
-    <![CDATA[<p>Welcome to <a href="http://hexo.io/" target="_blank" rel="external">Hexo</a>! This is your very first post. Check <a href="http://hexo.io]]>
+    <![CDATA[<p>SharedPreferences是十分常用的一个工具。前几天在写一个功能的时候，发现在一个Activity中保存的信息在另一个Activity中找不到。一直为空，后来看源码才发现获取SharedPreferences是有两种方式</p>
+<blockquote>
+<ul>]]>
     </summary>
+    
+      <category term="android" scheme="http://yoursite.com/tags/android/"/>
     
   </entry>
   
