@@ -30,7 +30,7 @@
 
 
 
-  <meta name="keywords" content="android," />
+  <meta name="keywords" content="android,android studio," />
 
 
 
@@ -41,37 +41,16 @@
   <link rel="shorticon icon" type="image/x-icon" href="/favicon.ico?v=0.4.4" />
 
 
-<meta name="description" content="SharedPreferences是十分常用的一个工具。前几天在写一个功能的时候，发现在一个Activity中保存的信息在另一个Activity中找不到。一直为空，后来看源码才发现获取SharedPreferences是有两种方式
-
-
-getPreferences(int mode)
-getSharedPreferences(String name, int mode)
-
-
-我们先看getPref">
+<meta name="description" content="这是一种简单又方便的方法，速度还不错。首先在ping.chinaz.com/上ping”g.cn/“获取谷歌中国的ip地址，选择最快的一条线路就好了。在SDK配置中，server填ip地址，端口填80。通过这方法，终于能愉快的更新了~参考知乎。">
 <meta property="og:type" content="article">
-<meta property="og:title" content="使用SharedPreferences 需要注意的一点">
-<meta property="og:url" content="http://yoursite.com/2015/07/31/SharedPreferences tips/index.html">
+<meta property="og:title" content="面对GFW，更新SDK新方法">
+<meta property="og:url" content="http://yoursite.com/2015/09/24/sdk/index.html">
 <meta property="og:site_name" content="canaan's blog">
-<meta property="og:description" content="SharedPreferences是十分常用的一个工具。前几天在写一个功能的时候，发现在一个Activity中保存的信息在另一个Activity中找不到。一直为空，后来看源码才发现获取SharedPreferences是有两种方式
-
-
-getPreferences(int mode)
-getSharedPreferences(String name, int mode)
-
-
-我们先看getPref">
-<meta property="og:updated_time" content="2015-07-31T03:27:12.689Z">
+<meta property="og:description" content="这是一种简单又方便的方法，速度还不错。首先在ping.chinaz.com/上ping”g.cn/“获取谷歌中国的ip地址，选择最快的一条线路就好了。在SDK配置中，server填ip地址，端口填80。通过这方法，终于能愉快的更新了~参考知乎。">
+<meta property="og:updated_time" content="2015-09-24T15:26:48.110Z">
 <meta name="twitter:card" content="summary">
-<meta name="twitter:title" content="使用SharedPreferences 需要注意的一点">
-<meta name="twitter:description" content="SharedPreferences是十分常用的一个工具。前几天在写一个功能的时候，发现在一个Activity中保存的信息在另一个Activity中找不到。一直为空，后来看源码才发现获取SharedPreferences是有两种方式
-
-
-getPreferences(int mode)
-getSharedPreferences(String name, int mode)
-
-
-我们先看getPref">
+<meta name="twitter:title" content="面对GFW，更新SDK新方法">
+<meta name="twitter:description" content="这是一种简单又方便的方法，速度还不错。首先在ping.chinaz.com/上ping”g.cn/“获取谷歌中国的ip地址，选择最快的一条线路就好了。在SDK配置中，server填ip地址，端口填80。通过这方法，终于能愉快的更新了~参考知乎。">
 
 
 <script type="text/javascript" id="hexo.configuration">
@@ -81,7 +60,7 @@ getSharedPreferences(String name, int mode)
   };
 </script>
 
-    <title> 使用SharedPreferences 需要注意的一点 // canaan's blog </title>
+    <title> 面对GFW，更新SDK新方法 // canaan's blog </title>
 </head>
 <body itemscope itemtype="http://schema.org/WebPage" lang="">
 <!--[if lte IE 8]>
@@ -192,7 +171,7 @@ getSharedPreferences(String name, int mode)
           
           
             
-              使用SharedPreferences 需要注意的一点
+              面对GFW，更新SDK新方法
             
           
         </h1>
@@ -201,8 +180,8 @@ getSharedPreferences(String name, int mode)
       <div class="post-meta">
         <span class="post-time">
           發表於
-          <time itemprop="dateCreated" datetime="2015-07-31T11:13:47+08:00" content="2015-07-31">
-            2015-07-31
+          <time itemprop="dateCreated" datetime="2015-09-24T23:04:05+08:00" content="2015-09-24">
+            2015-09-24
           </time>
         </span>
 
@@ -220,42 +199,7 @@ getSharedPreferences(String name, int mode)
       
 
       
-        <span itemprop="articleBody"><p>SharedPreferences是十分常用的一个工具。前几天在写一个功能的时候，发现在一个Activity中保存的信息在另一个Activity中找不到。一直为空，后来看源码才发现获取SharedPreferences是有两种方式</p>
-<blockquote>
-<ul>
-<li>getPreferences(int mode)</li>
-<li>getSharedPreferences(String name, int mode)</li>
-</ul>
-</blockquote>
-<p>我们先看getPreferences(int mode)源码</p>
-<!-- lang:java-->
-<pre><code>/<span class="keyword">*</span><span class="keyword">*</span>
- <span class="keyword">*</span> Retrieve a {<span class="comment">@link SharedPreferences} object for accessing preferences</span>
- <span class="keyword">*</span> that are private to this activity.  This simply calls the underlying
- <span class="keyword">*</span> {<span class="comment">@link #getSharedPreferences(String, int)} method by passing in this activity's</span>
- <span class="keyword">*</span> class name as the preferences name.
- <span class="keyword">*</span>
- <span class="keyword">*</span> <span class="comment">@param mode Operating mode.  Use {@link #MODE_PRIVATE} for the default</span>
- <span class="keyword">*</span>             operation, {<span class="comment">@link #MODE_WORLD_READABLE} and</span>
- <span class="keyword">*</span>             {<span class="comment">@link #MODE_WORLD_WRITEABLE} to control permissions.</span>
- <span class="keyword">*</span>
- <span class="keyword">*</span> <span class="comment">@return Returns the single SharedPreferences instance that can be used</span>
- <span class="keyword">*</span>         to retrieve and modify the preference values.
- <span class="keyword">*</span>/
-public SharedPreferences getPreferences(int mode) {
-    return getSharedPreferences(getLocalClassName(), mode);
-}
-</code></pre><p>注释中说明了，这个方法获取了一个是当前Activity的私有SharedPreferences对象，并且是获得该类的名字后调用getSharedPreferences(String name, int mode)，将名字作为第一个参数—-名字传入，所以其实在其他activity中使用了当前的activity的类名（不包括包名）也是可以获取的.</p>
-<p>再来讲讲getSharedPreferences(String name, int mode)的第二个参数mode</p>
-<blockquote>
-<ul>
-<li>MODE_PRIVATE(只能自己的应用获取的到，如果已存在就替换)</li>
-<li>MODE_APPEND(只能自己的应用获取的到，如果已存在就接在目前数据之后)</li>
-<li>MODE_WORLD_READABLE(其他应用都能获取的到，可读，但是由于数据不安全，已被废弃)</li>
-<li>MODE_WORLD_WRITEABLE(其他应用都能获取的到，可写，但是由于数据不安全，已被废弃)</li>
-<li>MODE_MULTI_PROCESS(在多进程同时访问一个SharedPreferces使用，在Android2.3之前会自动调用，但是2.3之后就必须手动声明)</li>
-</ul>
-</blockquote>
+        <span itemprop="articleBody"><p>这是一种简单又方便的方法，速度还不错。<br>首先在<strong>ping.chinaz.com/</strong>上ping”<strong>g.cn/</strong>“获取谷歌中国的ip地址，选择最快的一条线路就好了。<br>在SDK配置中，server填ip地址，端口填80。<br>通过这方法，终于能愉快的更新了~<br>参考知乎。</p>
 </span>
       
     </div>
@@ -266,6 +210,8 @@ public SharedPreferences getPreferences(int mode) {
           
             <a href="/tags/android/" rel="tag">#android</a>
           
+            <a href="/tags/android-studio/" rel="tag">#android studio</a>
+          
         </div>
       
 
@@ -273,11 +219,11 @@ public SharedPreferences getPreferences(int mode) {
         <div class="post-nav">
           <div class="post-nav-prev post-nav-item">
             
-              <a href="/2015/09/24/sdk/" rel="prev">面对GFW，更新SDK新方法</a>
-            
           </div>
 
           <div class="post-nav-next post-nav-item">
+            
+              <a href="/2015/07/31/SharedPreferences tips/" rel="next">使用SharedPreferences 需要注意的一点</a>
             
           </div>
         </div>

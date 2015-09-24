@@ -4,7 +4,7 @@
   
   <link href="/atom.xml" rel="self"/>
   <link href="http://yoursite.com/"/>
-  <updated>2015-07-31T03:27:12.689Z</updated>
+  <updated>2015-09-24T15:26:48.110Z</updated>
   <id>http://yoursite.com/</id>
   
   <author>
@@ -13,6 +13,24 @@
   </author>
   
   <generator uri="http://hexo.io/">Hexo</generator>
+  
+  <entry>
+    <title><![CDATA[面对GFW，更新SDK新方法]]></title>
+    <link href="http://yoursite.com/2015/09/24/sdk/"/>
+    <id>http://yoursite.com/2015/09/24/sdk/</id>
+    <published>2015-09-24T15:04:05.000Z</published>
+    <updated>2015-09-24T15:26:48.110Z</updated>
+    <content type="html"><![CDATA[<p>这是一种简单又方便的方法，速度还不错。<br>首先在<strong>ping.chinaz.com/</strong>上ping”<strong>g.cn/</strong>“获取谷歌中国的ip地址，选择最快的一条线路就好了。<br>在SDK配置中，server填ip地址，端口填80。<br>通过这方法，终于能愉快的更新了~<br>参考知乎。</p>
+]]></content>
+    <summary type="html">
+    <![CDATA[<p>这是一种简单又方便的方法，速度还不错。<br>首先在<strong>ping.chinaz.com/</strong>上ping”<strong>g.cn/</strong>“获取谷歌中国的ip地址，选择最快的一条线路就好了。<br>在SDK配置中，server填ip地址，]]>
+    </summary>
+    
+      <category term="android" scheme="http://yoursite.com/tags/android/"/>
+    
+      <category term="android studio" scheme="http://yoursite.com/tags/android-studio/"/>
+    
+  </entry>
   
   <entry>
     <title><![CDATA[使用SharedPreferences 需要注意的一点]]></title>
