@@ -4,7 +4,7 @@
   
   <link href="/atom.xml" rel="self"/>
   <link href="http://yoursite.com/"/>
-  <updated>2015-09-24T15:26:48.110Z</updated>
+  <updated>2015-10-17T15:41:23.000Z</updated>
   <id>http://yoursite.com/</id>
   
   <author>
@@ -15,11 +15,82 @@
   <generator uri="http://hexo.io/">Hexo</generator>
   
   <entry>
+    <title><![CDATA[volley 源码阅读]]></title>
+    <link href="http://yoursite.com/2015/10/10/volley%20%E6%BA%90%E7%A0%81%E9%98%85%E8%AF%BB/"/>
+    <id>http://yoursite.com/2015/10/10/volley 源码阅读/</id>
+    <published>2015-10-10T03:13:47.000Z</published>
+    <updated>2015-10-17T15:41:23.000Z</updated>
+    <content type="html"><![CDATA[<h4 id="流程:">流程:</h4><ul>
+<li>调用Volley.newRequestQueue获得requestQueue对象<ul>
+<li>如果不传入httpStack参数，则根据系统版本来创建httpStcak</li>
+<li>根据创建的httpStack创建NetWork</li>
+<li>queue.start()，其中默认创建了四个NetWorkDispatcher和一个CacheDispatcher</li>
+</ul>
+</li>
+<li>add() 创建request对象加入到requestQueue中<ul>
+<li>判断是否可以缓存</li>
+<li>可以则加入到缓存队列，否则加入网络请求队列<ul>
+<li>若加入缓存队列，先在缓存中找相应的缓存结果。如果没有命中，加入到网络请求队列中</li>
+<li>若是命中，判断缓存是否过期，若过期，加入到网络请求队列</li>
+<li>若没有过期，则直接使用缓存数据</li>
+</ul>
+</li>
+<li>若加入到网络请求队列<ul>
+<li>发送网络请求是通过BasicNetwork的performRequest()</li>
+<li>其中通过httpStack来请求网络，并返回一个NetworkResponse对象</li>
+<li>解析数据交给request中的parseNetworkResponse()方法，该方法需要重写，对于不同的返回对象有不同的解析方式</li>
+<li>解析完成之后，调用ExecutorDelivery的postResponse()，回调解析的数据。通过在一个关联主线程的Runnable对象中，保证run()在主线程运行</li>
+<li>在run()中调用了Request的deliverResponse()方法，在该方法中奖相应的数据回调给Response.Listener的onResponse()方法</li>
+</ul>
+</li>
+</ul>
+</li>
+<li><strong>over</strong></li>
+</ul>
+<h4 id="优点和特点:">优点和特点:</h4><ul>
+<li>扩展性高，可以自定义httpStack，request，缓存。框架的耦合度很低。</li>
+<li>会自动重试</li>
+<li>维护了一个byte[]回收池，减少了内存的分配回收</li>
+<li>缓存：  <ul>
+<li>根据Cache-Control和Expires首部来计算缓存的过期时间。如果两个首部都存在情况下，以Cache-Control为准。</li>
+<li>利用If-None-Match和If-Modified-Since对过期缓存或者不新鲜缓存，进行请求再验证，并处理 304 响应，更新缓存。</li>
+<li>默认的缓存实现，将缓存以文件的形式存储在 Disk，程序退出后不会丢失。  </li>
+</ul>
+</li>
+</ul>
+<h4 id="缺点：">缺点：</h4><ul>
+<li>只适合小数据的传输</li>
+<li>重试容易造成多次请求，在一次请求超时之后应该取消该请求。</li>
+</ul>
+<h4 id="tips:">tips:</h4><ul>
+<li>ResponseDelivery里维护了一个<strong>关联UI线程消息队列</strong>的Handler：<br><code>Handler mResponseHandler = new Handler(Looper.getMainLooper());</code></li>
+<li><p>HUrlStack中存在一个URLRewriter接口，用于更改之前提供的url。如果参数为null，则表示之前的url已经没用了。</p>
+  <figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">if</span> (mUrlRewriter != <span class="keyword">null</span>) &#123;  </span><br><span class="line">    String rewritten = mUrlRewriter.rewriteUrl(url);  </span><br><span class="line">    <span class="keyword">if</span> (rewritten == <span class="keyword">null</span>) &#123;</span><br><span class="line">        <span class="keyword">throw</span> <span class="keyword">new</span> IOException(<span class="string">"URL blocked by rewriter: "</span> + url);</span><br><span class="line">    &#125;</span><br><span class="line">    url = rewritten;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+</li>
+<li><p>ByteArrayPool 是一个byte[]回收池，减少了内存的分配和回收。其维护了两个ArrayList，一个根据byte[]的加入时间排序，一个根据byte[]的大小排序。当需要一定大小的内存时，根据大小排序的byte[]数组寻找可去除正好大小的空间，当回收时如果大小超过上限，则从时间list上去掉第一个byte[]。</p>
+</li>
+</ul>
+<blockquote>
+<p>参考：<br>volley源码<br><a href="http://blog.csdn.net/guolin_blog/article/details/17656437" target="_blank" rel="external">http://blog.csdn.net/guolin_blog/article/details/17656437</a><br><a href="http://www.codekk.com/blogs/detail/54cfab086c4761e5001b2542" target="_blank" rel="external">http://www.codekk.com/blogs/detail/54cfab086c4761e5001b2542</a></p>
+</blockquote>
+]]></content>
+    <summary type="html">
+    <![CDATA[<h4 id="流程:">流程:</h4><ul>
+<li>调用Volley.newRequestQueue获得requestQueue对象<ul>
+<li>如果不传入httpStack参数，则根据系统版本来创建httpStcak</li>
+<li>根据创建的httpStack创]]>
+    </summary>
+    
+      <category term="android" scheme="http://yoursite.com/tags/android/"/>
+    
+  </entry>
+  
+  <entry>
     <title><![CDATA[面对GFW，更新SDK新方法]]></title>
     <link href="http://yoursite.com/2015/09/24/sdk/"/>
     <id>http://yoursite.com/2015/09/24/sdk/</id>
     <published>2015-09-24T15:04:05.000Z</published>
-    <updated>2015-09-24T15:26:48.110Z</updated>
+    <updated>2015-09-24T15:26:48.000Z</updated>
     <content type="html"><![CDATA[<p>这是一种简单又方便的方法，速度还不错。<br>首先在<strong>ping.chinaz.com/</strong>上ping”<strong>g.cn/</strong>“获取谷歌中国的ip地址，选择最快的一条线路就好了。<br>在SDK配置中，server填ip地址，端口填80。<br>通过这方法，终于能愉快的更新了~<br>参考知乎。</p>
 ]]></content>
     <summary type="html">
@@ -37,7 +108,7 @@
     <link href="http://yoursite.com/2015/07/31/SharedPreferences%20tips/"/>
     <id>http://yoursite.com/2015/07/31/SharedPreferences tips/</id>
     <published>2015-07-31T03:13:47.000Z</published>
-    <updated>2015-07-31T03:27:12.689Z</updated>
+    <updated>2015-07-31T03:27:12.000Z</updated>
     <content type="html"><![CDATA[<p>SharedPreferences是十分常用的一个工具。前几天在写一个功能的时候，发现在一个Activity中保存的信息在另一个Activity中找不到。一直为空，后来看源码才发现获取SharedPreferences是有两种方式</p>
 <blockquote>
 <ul>

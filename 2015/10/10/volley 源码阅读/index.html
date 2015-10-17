@@ -30,7 +30,7 @@
 
 
 
-  <meta name="keywords" content="Hi,next" />
+  <meta name="keywords" content="android," />
 
 
 
@@ -41,15 +41,37 @@
   <link rel="shorticon icon" type="image/x-icon" href="/favicon.ico?v=0.4.4" />
 
 
-<meta name="description" content="Android Developer">
-<meta property="og:type" content="website">
-<meta property="og:title" content="canaan's blog">
-<meta property="og:url" content="http://yoursite.com/index.html">
+<meta name="description" content="流程:
+调用Volley.newRequestQueue获得requestQueue对象
+如果不传入httpStack参数，则根据系统版本来创建httpStcak
+根据创建的httpStack创建NetWork
+queue.start()，其中默认创建了四个NetWorkDispatcher和一个CacheDispatcher
+
+
+add() 创建request对象加入到requestQueue中">
+<meta property="og:type" content="article">
+<meta property="og:title" content="volley 源码阅读">
+<meta property="og:url" content="http://yoursite.com/2015/10/10/volley 源码阅读/index.html">
 <meta property="og:site_name" content="canaan's blog">
-<meta property="og:description" content="Android Developer">
+<meta property="og:description" content="流程:
+调用Volley.newRequestQueue获得requestQueue对象
+如果不传入httpStack参数，则根据系统版本来创建httpStcak
+根据创建的httpStack创建NetWork
+queue.start()，其中默认创建了四个NetWorkDispatcher和一个CacheDispatcher
+
+
+add() 创建request对象加入到requestQueue中">
+<meta property="og:updated_time" content="2015-10-17T15:41:23.000Z">
 <meta name="twitter:card" content="summary">
-<meta name="twitter:title" content="canaan's blog">
-<meta name="twitter:description" content="Android Developer">
+<meta name="twitter:title" content="volley 源码阅读">
+<meta name="twitter:description" content="流程:
+调用Volley.newRequestQueue获得requestQueue对象
+如果不传入httpStack参数，则根据系统版本来创建httpStcak
+根据创建的httpStack创建NetWork
+queue.start()，其中默认创建了四个NetWorkDispatcher和一个CacheDispatcher
+
+
+add() 创建request对象加入到requestQueue中">
 
 
 <script type="text/javascript" id="hexo.configuration">
@@ -59,7 +81,7 @@
   };
 </script>
 
-    <title> canaan's blog </title>
+    <title> volley 源码阅读 // canaan's blog </title>
 </head>
 <body itemscope itemtype="http://schema.org/WebPage" lang="">
 <!--[if lte IE 8]>
@@ -75,9 +97,7 @@
 
 
 
-<div class="container one-column 
-   page-home 
-">
+<div class="container one-column page-post-detail">
     <div class="headband"></div>
     <header id="header" class="header" itemscope itemtype="http://schema.org/WPHeader">
         <div class="header-inner"><h1 class="site-meta">
@@ -159,9 +179,9 @@
         <div class="main-inner">
             <div id="content" class="content">
                 
-  <section id="posts" class="posts-expand">
+
+  <div id="posts" class="posts-expand">
     
-      
 
   <article class="post post-type-normal " itemscope itemtype="http://schema.org/Article">
     <header class="post-header">
@@ -172,9 +192,7 @@
           
           
             
-              <a class="post-title-link" href="/2015/10/10/volley 源码阅读/" itemprop="url">
-                volley 源码阅读
-              </a>
+              volley 源码阅读
             
           
         </h1>
@@ -202,8 +220,7 @@
       
 
       
-        
-          <span itemprop="articleBody"><h4 id="流程:">流程:</h4><ul>
+        <span itemprop="articleBody"><h4 id="流程:">流程:</h4><ul>
 <li>调用Volley.newRequestQueue获得requestQueue对象<ul>
 <li>如果不传入httpStack参数，则根据系统版本来创建httpStcak</li>
 <li>根据创建的httpStack创建NetWork</li>
@@ -257,191 +274,53 @@
 <p>参考：<br>volley源码<br><a href="http://blog.csdn.net/guolin_blog/article/details/17656437" target="_blank" rel="external">http://blog.csdn.net/guolin_blog/article/details/17656437</a><br><a href="http://www.codekk.com/blogs/detail/54cfab086c4761e5001b2542" target="_blank" rel="external">http://www.codekk.com/blogs/detail/54cfab086c4761e5001b2542</a></p>
 </blockquote>
 </span>
-        
       
     </div>
 
     <footer class="post-footer">
       
-
+        <div class="post-tags">
+          
+            <a href="/tags/android/" rel="tag">#android</a>
+          
+        </div>
       
 
       
+        <div class="post-nav">
+          <div class="post-nav-prev post-nav-item">
+            
+          </div>
+
+          <div class="post-nav-next post-nav-item">
+            
+              <a href="/2015/09/24/sdk/" rel="next">面对GFW，更新SDK新方法</a>
+            
+          </div>
+        </div>
       
-        <div class="post-eof"></div>
+
+      
       
     </footer>
   </article>
 
 
-    
-      
 
-  <article class="post post-type-normal " itemscope itemtype="http://schema.org/Article">
-    <header class="post-header">
-
-      
-      
-        <h1 class="post-title" itemprop="name headline">
-          
-          
-            
-              <a class="post-title-link" href="/2015/09/24/sdk/" itemprop="url">
-                面对GFW，更新SDK新方法
-              </a>
-            
-          
-        </h1>
-      
-
-      <div class="post-meta">
-        <span class="post-time">
-          發表於
-          <time itemprop="dateCreated" datetime="2015-09-24T23:04:05+08:00" content="2015-09-24">
-            2015-09-24
-          </time>
-        </span>
-
-        
-
-        
-          
-        
-      </div>
-    </header>
-
-    <div class="post-body">
-
-      
-      
-
-      
-        
-          <span itemprop="articleBody"><p>这是一种简单又方便的方法，速度还不错。<br>首先在<strong>ping.chinaz.com/</strong>上ping”<strong>g.cn/</strong>“获取谷歌中国的ip地址，选择最快的一条线路就好了。<br>在SDK配置中，server填ip地址，端口填80。<br>通过这方法，终于能愉快的更新了~<br>参考知乎。</p>
-</span>
-        
+    <div class="post-spread">
       
     </div>
+  </div>
 
-    <footer class="post-footer">
-      
-
-      
-
-      
-      
-        <div class="post-eof"></div>
-      
-    </footer>
-  </article>
-
-
-    
-      
-
-  <article class="post post-type-normal " itemscope itemtype="http://schema.org/Article">
-    <header class="post-header">
-
-      
-      
-        <h1 class="post-title" itemprop="name headline">
-          
-          
-            
-              <a class="post-title-link" href="/2015/07/31/SharedPreferences tips/" itemprop="url">
-                使用SharedPreferences 需要注意的一点
-              </a>
-            
-          
-        </h1>
-      
-
-      <div class="post-meta">
-        <span class="post-time">
-          發表於
-          <time itemprop="dateCreated" datetime="2015-07-31T11:13:47+08:00" content="2015-07-31">
-            2015-07-31
-          </time>
-        </span>
-
-        
-
-        
-          
-        
-      </div>
-    </header>
-
-    <div class="post-body">
-
-      
-      
-
-      
-        
-          <span itemprop="articleBody"><p>SharedPreferences是十分常用的一个工具。前几天在写一个功能的时候，发现在一个Activity中保存的信息在另一个Activity中找不到。一直为空，后来看源码才发现获取SharedPreferences是有两种方式</p>
-<blockquote>
-<ul>
-<li>getPreferences(int mode)</li>
-<li>getSharedPreferences(String name, int mode)</li>
-</ul>
-</blockquote>
-<p>我们先看getPreferences(int mode)源码</p>
-<!-- lang:java-->
-<pre><code>/<span class="keyword">*</span><span class="keyword">*</span>
- <span class="keyword">*</span> Retrieve a {<span class="comment">@link SharedPreferences} object for accessing preferences</span>
- <span class="keyword">*</span> that are private to this activity.  This simply calls the underlying
- <span class="keyword">*</span> {<span class="comment">@link #getSharedPreferences(String, int)} method by passing in this activity's</span>
- <span class="keyword">*</span> class name as the preferences name.
- <span class="keyword">*</span>
- <span class="keyword">*</span> <span class="comment">@param mode Operating mode.  Use {@link #MODE_PRIVATE} for the default</span>
- <span class="keyword">*</span>             operation, {<span class="comment">@link #MODE_WORLD_READABLE} and</span>
- <span class="keyword">*</span>             {<span class="comment">@link #MODE_WORLD_WRITEABLE} to control permissions.</span>
- <span class="keyword">*</span>
- <span class="keyword">*</span> <span class="comment">@return Returns the single SharedPreferences instance that can be used</span>
- <span class="keyword">*</span>         to retrieve and modify the preference values.
- <span class="keyword">*</span>/
-public SharedPreferences getPreferences(int mode) {
-    return getSharedPreferences(getLocalClassName(), mode);
-}
-</code></pre><p>注释中说明了，这个方法获取了一个是当前Activity的私有SharedPreferences对象，并且是获得该类的名字后调用getSharedPreferences(String name, int mode)，将名字作为第一个参数—-名字传入，所以其实在其他activity中使用了当前的activity的类名（不包括包名）也是可以获取的.</p>
-<p>再来讲讲getSharedPreferences(String name, int mode)的第二个参数mode</p>
-<blockquote>
-<ul>
-<li>MODE_PRIVATE(只能自己的应用获取的到，如果已存在就替换)</li>
-<li>MODE_APPEND(只能自己的应用获取的到，如果已存在就接在目前数据之后)</li>
-<li>MODE_WORLD_READABLE(其他应用都能获取的到，可读，但是由于数据不安全，已被废弃)</li>
-<li>MODE_WORLD_WRITEABLE(其他应用都能获取的到，可写，但是由于数据不安全，已被废弃)</li>
-<li>MODE_MULTI_PROCESS(在多进程同时访问一个SharedPreferces使用，在Android2.3之前会自动调用，但是2.3之后就必须手动声明)</li>
-</ul>
-</blockquote>
-</span>
-        
-      
-    </div>
-
-    <footer class="post-footer">
-      
-
-      
-
-      
-      
-        <div class="post-eof"></div>
-      
-    </footer>
-  </article>
-
-
-    
-  </section>
-
-  
 
             </div>
 
             
 
+            
+              <div class="comments" id="comments">
+                
+              </div>
             
         </div>
 
@@ -458,6 +337,15 @@ public SharedPreferences getPreferences(int mode) {
   <aside id="sidebar" class="sidebar">
     <div class="sidebar-inner">
 
+      
+        <ul class="sidebar-nav motion-element">
+          <li class="sidebar-nav-toc sidebar-nav-active" data-target="post-toc-wrap" >
+            文章目錄
+          </li>
+          <li class="sidebar-nav-overview" data-target="site-overview">
+            本站概覽
+          </li>
+        </ul>
       
 
       <section class="site-overview">
@@ -513,6 +401,17 @@ public SharedPreferences getPreferences(int mode) {
       </section>
 
       
+        <section class="post-toc-wrap sidebar-panel-active">
+          <div class="post-toc-indicator-top post-toc-indicator"></div>
+          <div class="post-toc">
+            
+            
+              <div class="post-toc-content"><ol class="nav"><li class="nav-item nav-level-4"><a class="nav-link" href="#流程:"><span class="nav-number">1.</span> <span class="nav-text">流程:</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#优点和特点:"><span class="nav-number">2.</span> <span class="nav-text">优点和特点:</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#缺点："><span class="nav-number">3.</span> <span class="nav-text">缺点：</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#tips:"><span class="nav-number">4.</span> <span class="nav-text">tips:</span></a></li></ol></div>
+            
+          </div>
+          <div class="post-toc-indicator-bottom post-toc-indicator"></div>
+        </section>
+      
 
     </div>
   </aside>
@@ -556,13 +455,13 @@ public SharedPreferences getPreferences(int mode) {
   
   
   
-  
-  
+    
+    
 
   
 
 
-
+  
   
   <script type="text/javascript" src="/vendors/fancybox/source/jquery.fancybox.pack.js"></script>
   <script type="text/javascript" src="/js/fancy-box.js?v=0.4.4"></script>
@@ -581,6 +480,165 @@ public SharedPreferences getPreferences(int mode) {
   <script type="text/javascript" src="/js/search-toggle.js"></script>
 
 
+  
+<script type="text/javascript" src="/js/bootstrap.scrollspy.js?v=0.4.4" id="bootstrap.scrollspy.custom"></script>
+
+
+<script type="text/javascript" id="sidebar.toc.highlight">
+  $(document).ready(function () {
+    var tocSelector = '.post-toc';
+    var $tocSelector = $(tocSelector);
+    var activeCurrentSelector = '.active-current';
+
+    $tocSelector
+      .on('activate.bs.scrollspy', function () {
+        var $currentActiveElement = $(tocSelector + ' .active').last();
+
+        removeCurrentActiveClass();
+        $currentActiveElement.addClass('active-current');
+
+        $tocSelector[0].scrollTop = $currentActiveElement.position().top;
+      })
+      .on('clear.bs.scrollspy', function () {
+        removeCurrentActiveClass();
+      });
+
+    function removeCurrentActiveClass () {
+      $(tocSelector + ' ' + activeCurrentSelector)
+        .removeClass(activeCurrentSelector.substring(1));
+    }
+
+    function processTOC () {
+      getTOCMaxHeight();
+      toggleTOCOverflowIndicators();
+    }
+
+    function getTOCMaxHeight () {
+      var height = $('.sidebar').height() -
+                   $tocSelector.position().top -
+                   $('.post-toc-indicator-bottom').height();
+
+      $tocSelector.css('height', height);
+
+      return height;
+    }
+
+    function toggleTOCOverflowIndicators () {
+      tocOverflowIndicator(
+        '.post-toc-indicator-top',
+        $tocSelector.scrollTop() > 0 ? 'show' : 'hide'
+      );
+
+      tocOverflowIndicator(
+        '.post-toc-indicator-bottom',
+        $tocSelector.scrollTop() >= $tocSelector.find('ol').height() - $tocSelector.height() ? 'hide' : 'show'
+      )
+    }
+
+    $(document).on('sidebar.motion.complete', function () {
+      processTOC();
+    });
+
+    $('body').scrollspy({ target: tocSelector });
+    $(window).on('resize', function () {
+      if ( $('.sidebar').hasClass('sidebar-active') ) {
+        processTOC();
+      }
+    });
+
+    onScroll($tocSelector);
+
+    function onScroll (element) {
+      element.on('mousewheel DOMMouseScroll', function (event) {
+          var oe = event.originalEvent;
+          var delta = oe.wheelDelta || -oe.detail;
+
+          this.scrollTop += ( delta < 0 ? 1 : -1 ) * 30;
+          event.preventDefault();
+
+          toggleTOCOverflowIndicators();
+      });
+    }
+
+    function tocOverflowIndicator (indicator, action) {
+      var $indicator = $(indicator);
+      var opacity = action === 'show' ? 0.4 : 0;
+      $indicator.velocity ?
+        $indicator.velocity('stop').velocity({
+          opacity: opacity
+        }, { duration: 100 }) :
+        $indicator.stop().animate({
+          opacity: opacity
+        }, 100);
+    }
+
+  });
+</script>
+
+<script type="text/javascript" id="sidebar.nav">
+  $(document).ready(function () {
+    var html = $('html');
+    var TAB_ANIMATE_DURATION = 200;
+    var hasVelocity = $.isFunction(html.velocity);
+
+    $('.sidebar-nav li').on('click', function () {
+      var item = $(this);
+      var activeTabClassName = 'sidebar-nav-active';
+      var activePanelClassName = 'sidebar-panel-active';
+      if (item.hasClass(activeTabClassName)) {
+        return;
+      }
+
+      var currentTarget = $('.' + activePanelClassName);
+      var target = $('.' + item.data('target'));
+
+      hasVelocity ?
+        currentTarget.velocity('transition.slideUpOut', TAB_ANIMATE_DURATION, function () {
+          target
+            .velocity('stop')
+            .velocity('transition.slideDownIn', TAB_ANIMATE_DURATION)
+            .addClass(activePanelClassName);
+        }) :
+        currentTarget.animate({ opacity: 0 }, TAB_ANIMATE_DURATION, function () {
+          currentTarget.hide();
+          target
+            .stop()
+            .css({'opacity': 0, 'display': 'block'})
+            .animate({ opacity: 1 }, TAB_ANIMATE_DURATION, function () {
+              currentTarget.removeClass(activePanelClassName);
+              target.addClass(activePanelClassName);
+            });
+        });
+
+      item.siblings().removeClass(activeTabClassName);
+      item.addClass(activeTabClassName);
+    });
+
+    $('.post-toc a').on('click', function (e) {
+      e.preventDefault();
+      var targetSelector = escapeSelector(this.getAttribute('href'));
+      var offset = $(targetSelector).offset().top;
+      hasVelocity ?
+        html.velocity('stop').velocity('scroll', {
+          offset: offset  + 'px',
+          mobileHA: false
+        }) :
+        $('html, body').stop().animate({
+          scrollTop: offset
+        }, 500);
+    });
+
+    // Expand sidebar on post detail page by default, when post has a toc.
+    var $tocContent = $('.post-toc-content');
+    if (isDesktop() && CONFIG.sidebar === 'post') {
+      if ($tocContent.length > 0 && $tocContent.html().trim().length > 0) {
+        displaySidebar();
+      }
+    }
+  });
+</script>
+
+
 
 <script type="text/javascript">
     $(document).ready(function () {
@@ -590,13 +648,6 @@ public SharedPreferences getPreferences(int mode) {
     });
 </script>
 
-
-
-
-  
-  
-
-  
 
 
 
