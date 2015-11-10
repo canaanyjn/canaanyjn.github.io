@@ -41,37 +41,44 @@
   <link rel="shorticon icon" type="image/x-icon" href="/favicon.ico?v=0.4.4" />
 
 
-<meta name="description" content="SharedPreferences是十分常用的一个工具。前几天在写一个功能的时候，发现在一个Activity中保存的信息在另一个Activity中找不到。一直为空，后来看源码才发现获取SharedPreferences是有两种方式
+<meta name="description" content="—
+功能:
+在后台执行长时间的操作  
+提供某些功能给其他应用
 
-
-getPreferences(int mode)
-getSharedPreferences(String name, int mode)
-
-
-我们先看getPref">
+使用Service:
+创建Service:
+AndroidMainfest中注册service  
+start or bind or either
+started的Service能一直在后台运行，即使start该Service的组件已经被销毁了。started的Service一般只进行一个操作，并且不返回结果给caller。star">
 <meta property="og:type" content="article">
-<meta property="og:title" content="使用SharedPreferences 需要注意的一点">
-<meta property="og:url" content="http://yoursite.com/2015/07/31/SharedPreferences tips/index.html">
+<meta property="og:title" content="Service 整理">
+<meta property="og:url" content="http://yoursite.com/2015/11/01/Service/index.html">
 <meta property="og:site_name" content="canaan's blog">
-<meta property="og:description" content="SharedPreferences是十分常用的一个工具。前几天在写一个功能的时候，发现在一个Activity中保存的信息在另一个Activity中找不到。一直为空，后来看源码才发现获取SharedPreferences是有两种方式
+<meta property="og:description" content="—
+功能:
+在后台执行长时间的操作  
+提供某些功能给其他应用
 
-
-getPreferences(int mode)
-getSharedPreferences(String name, int mode)
-
-
-我们先看getPref">
-<meta property="og:updated_time" content="2015-07-31T03:27:12.000Z">
+使用Service:
+创建Service:
+AndroidMainfest中注册service  
+start or bind or either
+started的Service能一直在后台运行，即使start该Service的组件已经被销毁了。started的Service一般只进行一个操作，并且不返回结果给caller。star">
+<meta property="og:image" content="http://developer.android.com/images/service_lifecycle.png">
+<meta property="og:updated_time" content="2015-11-10T09:09:30.000Z">
 <meta name="twitter:card" content="summary">
-<meta name="twitter:title" content="使用SharedPreferences 需要注意的一点">
-<meta name="twitter:description" content="SharedPreferences是十分常用的一个工具。前几天在写一个功能的时候，发现在一个Activity中保存的信息在另一个Activity中找不到。一直为空，后来看源码才发现获取SharedPreferences是有两种方式
+<meta name="twitter:title" content="Service 整理">
+<meta name="twitter:description" content="—
+功能:
+在后台执行长时间的操作  
+提供某些功能给其他应用
 
-
-getPreferences(int mode)
-getSharedPreferences(String name, int mode)
-
-
-我们先看getPref">
+使用Service:
+创建Service:
+AndroidMainfest中注册service  
+start or bind or either
+started的Service能一直在后台运行，即使start该Service的组件已经被销毁了。started的Service一般只进行一个操作，并且不返回结果给caller。star">
 
 
 <script type="text/javascript" id="hexo.configuration">
@@ -81,7 +88,7 @@ getSharedPreferences(String name, int mode)
   };
 </script>
 
-    <title> 使用SharedPreferences 需要注意的一点 // canaan's blog </title>
+    <title> Service 整理 // canaan's blog </title>
 </head>
 <body itemscope itemtype="http://schema.org/WebPage" lang="">
 <!--[if lte IE 8]>
@@ -192,7 +199,7 @@ getSharedPreferences(String name, int mode)
           
           
             
-              使用SharedPreferences 需要注意的一点
+              Service 整理
             
           
         </h1>
@@ -201,8 +208,8 @@ getSharedPreferences(String name, int mode)
       <div class="post-meta">
         <span class="post-time">
           發表於
-          <time itemprop="dateCreated" datetime="2015-07-31T11:13:47+08:00" content="2015-07-31">
-            2015-07-31
+          <time itemprop="dateCreated" datetime="2015-11-01T17:33:04+08:00" content="2015-11-01">
+            2015-11-01
           </time>
         </span>
 
@@ -220,42 +227,58 @@ getSharedPreferences(String name, int mode)
       
 
       
-        <span itemprop="articleBody"><p>SharedPreferences是十分常用的一个工具。前几天在写一个功能的时候，发现在一个Activity中保存的信息在另一个Activity中找不到。一直为空，后来看源码才发现获取SharedPreferences是有两种方式</p>
-<blockquote>
-<ul>
-<li>getPreferences(int mode)</li>
-<li>getSharedPreferences(String name, int mode)</li>
+        <span itemprop="articleBody"><p>—</p>
+<h3 id="功能:">功能:</h3><ul>
+<li>在后台执行长时间的操作  </li>
+<li>提供某些功能给其他应用</li>
 </ul>
-</blockquote>
-<p>我们先看getPreferences(int mode)源码</p>
-<!-- lang:java-->
-<pre><code>/<span class="keyword">*</span><span class="keyword">*</span>
- <span class="keyword">*</span> Retrieve a {<span class="comment">@link SharedPreferences} object for accessing preferences</span>
- <span class="keyword">*</span> that are private to this activity.  This simply calls the underlying
- <span class="keyword">*</span> {<span class="comment">@link #getSharedPreferences(String, int)} method by passing in this activity's</span>
- <span class="keyword">*</span> class name as the preferences name.
- <span class="keyword">*</span>
- <span class="keyword">*</span> <span class="comment">@param mode Operating mode.  Use {@link #MODE_PRIVATE} for the default</span>
- <span class="keyword">*</span>             operation, {<span class="comment">@link #MODE_WORLD_READABLE} and</span>
- <span class="keyword">*</span>             {<span class="comment">@link #MODE_WORLD_WRITEABLE} to control permissions.</span>
- <span class="keyword">*</span>
- <span class="keyword">*</span> <span class="comment">@return Returns the single SharedPreferences instance that can be used</span>
- <span class="keyword">*</span>         to retrieve and modify the preference values.
- <span class="keyword">*</span>/
-public SharedPreferences getPreferences(int mode) {
-    return getSharedPreferences(getLocalClassName(), mode);
-}
-</code></pre><p>注释中说明了，这个方法获取了一个是当前Activity的私有SharedPreferences对象，并且是获得该类的名字后调用getSharedPreferences(String name, int mode)，将名字作为第一个参数—-名字传入，所以其实在其他activity中使用了当前的activity的类名（不包括包名）也是可以获取的.</p>
-<p>再来讲讲getSharedPreferences(String name, int mode)的第二个参数mode</p>
-<blockquote>
-<ul>
-<li>MODE_PRIVATE(只能自己的应用获取的到，如果已存在就替换)</li>
-<li>MODE_APPEND(只能自己的应用获取的到，如果已存在就接在目前数据之后)</li>
-<li>MODE_WORLD_READABLE(其他应用都能获取的到，可读，但是由于数据不安全，已被废弃)</li>
-<li>MODE_WORLD_WRITEABLE(其他应用都能获取的到，可写，但是由于数据不安全，已被废弃)</li>
-<li>MODE_MULTI_PROCESS(在多进程同时访问一个SharedPreferces使用，在Android2.3之前会自动调用，但是2.3之后就必须手动声明)</li>
+<h3 id="使用Service:">使用Service:</h3><ul>
+<li><h4 id="创建Service:">创建Service:</h4><ul>
+<li><strong>AndroidMainfest中注册service</strong>  </li>
+<li><strong>start</strong> or <strong>bind</strong> or <strong>either</strong><ul>
+<li>started的Service能一直在后台运行，即使start该Service的组件已经被销毁了。started的Service一般只进行一个操作，并且不返回结果给caller。startServices()中传入的Intent最后到达onStartCommand()中。  </li>
+<li>bound的Service能同时绑定多个组件，并且当所有组件都解绑之后，该Service被销毁。该Service能与绑定的组件交互。  </li>
+<li>如果Service同时实现两个回调方法：<code>onStartCommand()</code>(允许组件start该Service),<code>onBind()</code>(允许组件bind该Service)。</li>
 </ul>
-</blockquote>
+</li>
+<li><strong>使用</strong><code>context.startService()</code><br>如果Service已经在运行了，就会直接调用onStartCommand()，否则会先调用onCreate()再调用onStartCommand()。如果Service没有提供binding，则组件想获得结果必须通过PendingIntent和BroadCast来与传递结果。</li>
+<li><strong>使用</strong><code>context.bindService()</code><br>如果想让组件与Service交互或者让其他应用调用系统的某些功能，使用Bound Service。一定要实现onBind()，并且返回一个继承Binder的IBinder，其中定义了Service与client之间的交互。在client里创建一个ServiceConnection对象，来获取service对象。<br>如果只是想service与activity在可见的时候交互，则在onStart(),onStop()里绑定和解绑。如果需要activity即使在后台停止了也可以接收到来自service的答复，则在onCreate()和onDestroy()中绑定和解绑。一般不要在onResume()和onPause()中绑定和解绑。    </li>
+</ul>
+</li>
+<li><h4 id="Stopping_a_Service">Stopping a Service</h4><ul>
+<li>bound的Service在所有绑定的组件解绑之后就会自动消除，调用onUnBind()，如果返回true，则在下一个client绑定该Service时调用onRebind()方法。</li>
+<li>started的Service的生命周期需要手动去管理，通过Service自己调用stopSelf()或者其他组件调用。在Service的所有任务完成之后就要销毁该Service，否则会一直在后台运行占用着资源，消耗电池。当停止Service时，如果还有任务正在执行，就会造成丢失，所以停止Service可以选择调用stopSelf(),并且传开始的请求的id，如果正在执行的请求的id与传入的id不符，Service将不会停止。</li>
+</ul>
+</li>
+<li><h4 id="Service_生命周期">Service 生命周期</h4><img src="http://developer.android.com/images/service_lifecycle.png" alt=""></li>
+</ul>
+<h3 id="Service与IntentService">Service与IntentService</h3><ul>
+<li><p>继承IntentService  </p>
+<ul>
+<li>IntendService中维护着一个工作线程去执行所有onStartCommand()中的任务  </li>
+<li>维护着一个工作队列一次发送一个intent到onHandleIntent()，所有的任务完成之后就会停止Service</li>
+<li>onBind()方法中默认返回null，说明其他组件无法bind该Service</li>
+<li><p>实现了onStartCommand()，发送intent到工作队列，然后到onHandleIntent()。</p>
+<p><strong>总之我们只用实现onHandleIntent()</strong>,如果需要重写其他回调函数，记得要调用父类的实现，免得功能失效。</p>
+</li>
+</ul>
+</li>
+<li>继承Service<ul>
+<li>如果需要有多线程，使用继承Service</li>
+<li>onStartCommand()一定要返回一个Integer，其值为三个值之一：  <ul>
+<li>START_NOT_STICKY（被杀了不重启）  </li>
+<li>START_STICKY(被杀了重启但不再次发送最后个intent)  </li>
+<li>START_REDELIVER_INTENT(被杀了重启但且再次发送最后个intent)</li>
+</ul>
+</li>
+</ul>
+</li>
+</ul>
+<h3 id="AIDL">AIDL</h3><p>只有当你允许不同的应用访问你的Service来进行进程间通信并且在service中需要维护多线程时才使用AIDL。如果不需要在不同应用中执行并发的进程间通信，你就该通过实现Binder来创建自己的接口或者如果需要执行进程间通信，但是不需要在service处理中多线程，只需要使用Messenger来实现你的接口。  </p>
+<h3 id="TIPs:">TIPs:</h3><ul>
+<li>如果Service中要进行CPU密集型操作或者阻塞式操作，需要维护一个Service自己的线程来做这些操作。IntentService有自己的线程。</li>
+<li>不要直接调用onStartCommand()，这是系统的事儿。</li>
+</ul>
 </span>
       
     </div>
@@ -273,11 +296,13 @@ public SharedPreferences getPreferences(int mode) {
         <div class="post-nav">
           <div class="post-nav-prev post-nav-item">
             
-              <a href="/2015/09/24/sdk/" rel="prev">面对GFW，更新SDK新方法</a>
+              <a href="/2015/11/04/Process&Thread/" rel="prev">Android Process and Thread 整理</a>
             
           </div>
 
           <div class="post-nav-next post-nav-item">
+            
+              <a href="/2015/10/10/volley 源码阅读/" rel="next">volley 源码阅读</a>
             
           </div>
         </div>
@@ -389,7 +414,7 @@ public SharedPreferences getPreferences(int mode) {
           <div class="post-toc">
             
             
-              <p class="post-toc-empty">此文章未包含目錄</p>
+              <div class="post-toc-content"><ol class="nav"><li class="nav-item nav-level-3"><a class="nav-link" href="#功能:"><span class="nav-number">1.</span> <span class="nav-text">功能:</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#使用Service:"><span class="nav-number">2.</span> <span class="nav-text">使用Service:</span></a><ol class="nav-child"><li class="nav-item nav-level-4"><a class="nav-link" href="#创建Service:"><span class="nav-number">2.1.</span> <span class="nav-text">创建Service:</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#Stopping_a_Service"><span class="nav-number">2.2.</span> <span class="nav-text">Stopping a Service</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#Service_生命周期"><span class="nav-number">2.3.</span> <span class="nav-text">Service 生命周期</span></a></li></ol></li><li class="nav-item nav-level-3"><a class="nav-link" href="#Service与IntentService"><span class="nav-number">3.</span> <span class="nav-text">Service与IntentService</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#AIDL"><span class="nav-number">4.</span> <span class="nav-text">AIDL</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#TIPs:"><span class="nav-number">5.</span> <span class="nav-text">TIPs:</span></a></li></ol></div>
             
           </div>
           <div class="post-toc-indicator-bottom post-toc-indicator"></div>

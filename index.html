@@ -172,6 +172,222 @@
           
           
             
+              <a class="post-title-link" href="/2015/11/04/Process&Thread/" itemprop="url">
+                Android Process and Thread 整理
+              </a>
+            
+          
+        </h1>
+      
+
+      <div class="post-meta">
+        <span class="post-time">
+          發表於
+          <time itemprop="dateCreated" datetime="2015-11-04T20:21:42+08:00" content="2015-11-04">
+            2015-11-04
+          </time>
+        </span>
+
+        
+
+        
+          
+        
+      </div>
+    </header>
+
+    <div class="post-body">
+
+      
+      
+
+      
+        
+          <span itemprop="articleBody"><p>所有组件默认在Android系统的main线程  </p>
+<ul>
+<li><h3 id="进程">进程</h3><p>默认所有组件运行在同一个进程中，如果对于组件要选择在那个进程进行，可以在manifest文件中的四个组件元素之下提供<code>android:process</code>属性。    <application>元素之下也可以提供<code>android:process</code>属性，来设置一个对于所有组件的默认的值。 </application></p>
+<ul>
+<li><h4 id="进程生命周期">进程生命周期</h4><p>内存不够时，系统会根据进程重要程度杀掉进程。  </p>
+<h5 id="进程重要程度分析：">进程重要程度分析：</h5><ul>
+<li><strong>前台进程(最后被杀)</strong>：   <pre><code><span class="bullet">* </span>持有一个与用户交互的Activity（<span class="code">`onResume()`</span>已经被调用） 
+<span class="bullet">* </span>持有一个用户交互的Activity绑定的Service
+<span class="bullet">* </span>持有一个在前台运行的Service
+<span class="bullet">* </span>持有一个正在调用其生命周期回调函数的Service
+<span class="bullet">* </span>持有一个正在执行其<span class="code">`onReceive()`</span>的BroadCast
+</code></pre></li>
+<li><strong>可见进程</strong>  <pre><code>没有前台可见组件，但是仍然能影响用户前台。
+<span class="bullet">* </span>持有一个可见但不是直接与用户交互的Activity(<span class="code">`onPaused()`</span>被调用)
+<span class="bullet">* </span>持有一个与前台Activity绑定的Service
+</code></pre></li>
+<li><strong>Service进程</strong>  <pre><code>持有一个通过调用`<span class="function"><span class="title">startService</span><span class="params">()</span></span>`创建的Service
+</code></pre></li>
+<li><strong>后台进程</strong>  <pre><code>持有一个用户当前并不可见的<span class="function"><span class="title">Activity</span><span class="params">(`onStop()</span></span>`被调用)，系统可以随时杀掉这些进程，来提供内存给前面几种进程。这些进程存放在LRU列表中，保证被杀的是用户最不用的。如果Activity的生命周期函数实现得当的话，杀掉这些进程并不会对用户产生影响，因为在复原Activity时，Activity会复原被杀前保存的可见状态。
+</code></pre></li>
+<li><p><strong>空进程</strong>      </p>
+<pre><code>并没有持有任何活动的组件，这些进程存在的目的是为了缓存，提高组件的下一次启动时间。  
+</code></pre><p>另外，一个进程的重要程度会根据其他与该进程相关的进程的重要程度增加。<br>一个Activity如果执行长时间操作的话，将该操作交给一个Service来做会比开启一个工作线程更好，尤其是如果执行时间比Activity更久。</p>
+</li>
+</ul>
+</li>
+</ul>
+</li>
+<li><h3 id="线程">线程</h3><p>  main线程负责传递事件到合适的用户组件去</p>
+<ul>
+<li>不要阻碍ui线程</li>
+<li>不要在ui线程外修改ui<br>Android提供了一些方法在其他线程进入UI线程</li>
+<li><code>Activity.runOnUiThread(Runnable)</code></li>
+<li><code>View.post(Runnable)</code></li>
+<li><p><code>View.postDelayed(Runnable, long)</code></p>
+<p>但对于需要与UI线程的工作线程来说，AsyncTask是个更好的选择.AsyncTask工作在工作线程，然后将结果传至UI线程。</p>
+</li>
+</ul>
+</li>
+<li><h3 id="线程安全方法">线程安全方法</h3><p>  有的方法在多个线程中被调用，容易造成线程不安全。这主要是对于能被远程调用的方法。</p>
+</li>
+</ul>
+</span>
+        
+      
+    </div>
+
+    <footer class="post-footer">
+      
+
+      
+
+      
+      
+        <div class="post-eof"></div>
+      
+    </footer>
+  </article>
+
+
+    
+      
+
+  <article class="post post-type-normal " itemscope itemtype="http://schema.org/Article">
+    <header class="post-header">
+
+      
+      
+        <h1 class="post-title" itemprop="name headline">
+          
+          
+            
+              <a class="post-title-link" href="/2015/11/01/Service/" itemprop="url">
+                Service 整理
+              </a>
+            
+          
+        </h1>
+      
+
+      <div class="post-meta">
+        <span class="post-time">
+          發表於
+          <time itemprop="dateCreated" datetime="2015-11-01T17:33:04+08:00" content="2015-11-01">
+            2015-11-01
+          </time>
+        </span>
+
+        
+
+        
+          
+        
+      </div>
+    </header>
+
+    <div class="post-body">
+
+      
+      
+
+      
+        
+          <span itemprop="articleBody"><p>—</p>
+<h3 id="功能:">功能:</h3><ul>
+<li>在后台执行长时间的操作  </li>
+<li>提供某些功能给其他应用</li>
+</ul>
+<h3 id="使用Service:">使用Service:</h3><ul>
+<li><h4 id="创建Service:">创建Service:</h4><ul>
+<li><strong>AndroidMainfest中注册service</strong>  </li>
+<li><strong>start</strong> or <strong>bind</strong> or <strong>either</strong><ul>
+<li>started的Service能一直在后台运行，即使start该Service的组件已经被销毁了。started的Service一般只进行一个操作，并且不返回结果给caller。startServices()中传入的Intent最后到达onStartCommand()中。  </li>
+<li>bound的Service能同时绑定多个组件，并且当所有组件都解绑之后，该Service被销毁。该Service能与绑定的组件交互。  </li>
+<li>如果Service同时实现两个回调方法：<code>onStartCommand()</code>(允许组件start该Service),<code>onBind()</code>(允许组件bind该Service)。</li>
+</ul>
+</li>
+<li><strong>使用</strong><code>context.startService()</code><br>如果Service已经在运行了，就会直接调用onStartCommand()，否则会先调用onCreate()再调用onStartCommand()。如果Service没有提供binding，则组件想获得结果必须通过PendingIntent和BroadCast来与传递结果。</li>
+<li><strong>使用</strong><code>context.bindService()</code><br>如果想让组件与Service交互或者让其他应用调用系统的某些功能，使用Bound Service。一定要实现onBind()，并且返回一个继承Binder的IBinder，其中定义了Service与client之间的交互。在client里创建一个ServiceConnection对象，来获取service对象。<br>如果只是想service与activity在可见的时候交互，则在onStart(),onStop()里绑定和解绑。如果需要activity即使在后台停止了也可以接收到来自service的答复，则在onCreate()和onDestroy()中绑定和解绑。一般不要在onResume()和onPause()中绑定和解绑。    </li>
+</ul>
+</li>
+<li><h4 id="Stopping_a_Service">Stopping a Service</h4><ul>
+<li>bound的Service在所有绑定的组件解绑之后就会自动消除，调用onUnBind()，如果返回true，则在下一个client绑定该Service时调用onRebind()方法。</li>
+<li>started的Service的生命周期需要手动去管理，通过Service自己调用stopSelf()或者其他组件调用。在Service的所有任务完成之后就要销毁该Service，否则会一直在后台运行占用着资源，消耗电池。当停止Service时，如果还有任务正在执行，就会造成丢失，所以停止Service可以选择调用stopSelf(),并且传开始的请求的id，如果正在执行的请求的id与传入的id不符，Service将不会停止。</li>
+</ul>
+</li>
+<li><h4 id="Service_生命周期">Service 生命周期</h4><img src="http://developer.android.com/images/service_lifecycle.png" alt=""></li>
+</ul>
+<h3 id="Service与IntentService">Service与IntentService</h3><ul>
+<li><p>继承IntentService  </p>
+<ul>
+<li>IntendService中维护着一个工作线程去执行所有onStartCommand()中的任务  </li>
+<li>维护着一个工作队列一次发送一个intent到onHandleIntent()，所有的任务完成之后就会停止Service</li>
+<li>onBind()方法中默认返回null，说明其他组件无法bind该Service</li>
+<li><p>实现了onStartCommand()，发送intent到工作队列，然后到onHandleIntent()。</p>
+<p><strong>总之我们只用实现onHandleIntent()</strong>,如果需要重写其他回调函数，记得要调用父类的实现，免得功能失效。</p>
+</li>
+</ul>
+</li>
+<li>继承Service<ul>
+<li>如果需要有多线程，使用继承Service</li>
+<li>onStartCommand()一定要返回一个Integer，其值为三个值之一：  <ul>
+<li>START_NOT_STICKY（被杀了不重启）  </li>
+<li>START_STICKY(被杀了重启但不再次发送最后个intent)  </li>
+<li>START_REDELIVER_INTENT(被杀了重启但且再次发送最后个intent)</li>
+</ul>
+</li>
+</ul>
+</li>
+</ul>
+<h3 id="AIDL">AIDL</h3><p>只有当你允许不同的应用访问你的Service来进行进程间通信并且在service中需要维护多线程时才使用AIDL。如果不需要在不同应用中执行并发的进程间通信，你就该通过实现Binder来创建自己的接口或者如果需要执行进程间通信，但是不需要在service处理中多线程，只需要使用Messenger来实现你的接口。  </p>
+<h3 id="TIPs:">TIPs:</h3><ul>
+<li>如果Service中要进行CPU密集型操作或者阻塞式操作，需要维护一个Service自己的线程来做这些操作。IntentService有自己的线程。</li>
+<li>不要直接调用onStartCommand()，这是系统的事儿。</li>
+</ul>
+</span>
+        
+      
+    </div>
+
+    <footer class="post-footer">
+      
+
+      
+
+      
+      
+        <div class="post-eof"></div>
+      
+    </footer>
+  </article>
+
+
+    
+      
+
+  <article class="post post-type-normal " itemscope itemtype="http://schema.org/Article">
+    <header class="post-header">
+
+      
+      
+        <h1 class="post-title" itemprop="name headline">
+          
+          
+            
               <a class="post-title-link" href="/2015/10/10/volley 源码阅读/" itemprop="url">
                 volley 源码阅读
               </a>
@@ -469,7 +685,7 @@ public SharedPreferences getPreferences(int mode) {
         <nav class="site-state motion-element">
           <div class="site-state-item site-state-posts">
             <a href="/archives">
-              <span class="site-state-item-count">3</span>
+              <span class="site-state-item-count">5</span>
               <span class="site-state-item-name">文章</span>
             </a>
           </div>

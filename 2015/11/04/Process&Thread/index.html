@@ -41,37 +41,34 @@
   <link rel="shorticon icon" type="image/x-icon" href="/favicon.ico?v=0.4.4" />
 
 
-<meta name="description" content="SharedPreferences是十分常用的一个工具。前几天在写一个功能的时候，发现在一个Activity中保存的信息在另一个Activity中找不到。一直为空，后来看源码才发现获取SharedPreferences是有两种方式
+<meta name="description" content="所有组件默认在Android系统的main线程  
 
+进程默认所有组件运行在同一个进程中，如果对于组件要选择在那个进程进行，可以在manifest文件中的四个组件元素之下提供android:process属性。    元素之下也可以提供android:process属性，来设置一个对于所有组件的默认的值。 
 
-getPreferences(int mode)
-getSharedPreferences(String name, int mode)
-
-
-我们先看getPref">
+进程生命周期内存不够时，系统会根据进程重要程度杀掉进程。  
+进程重要程度分析：
+前台进">
 <meta property="og:type" content="article">
-<meta property="og:title" content="使用SharedPreferences 需要注意的一点">
-<meta property="og:url" content="http://yoursite.com/2015/07/31/SharedPreferences tips/index.html">
+<meta property="og:title" content="Android Process and Thread 整理">
+<meta property="og:url" content="http://yoursite.com/2015/11/04/Process&Thread/index.html">
 <meta property="og:site_name" content="canaan's blog">
-<meta property="og:description" content="SharedPreferences是十分常用的一个工具。前几天在写一个功能的时候，发现在一个Activity中保存的信息在另一个Activity中找不到。一直为空，后来看源码才发现获取SharedPreferences是有两种方式
+<meta property="og:description" content="所有组件默认在Android系统的main线程  
 
+进程默认所有组件运行在同一个进程中，如果对于组件要选择在那个进程进行，可以在manifest文件中的四个组件元素之下提供android:process属性。    元素之下也可以提供android:process属性，来设置一个对于所有组件的默认的值。 
 
-getPreferences(int mode)
-getSharedPreferences(String name, int mode)
-
-
-我们先看getPref">
-<meta property="og:updated_time" content="2015-07-31T03:27:12.000Z">
+进程生命周期内存不够时，系统会根据进程重要程度杀掉进程。  
+进程重要程度分析：
+前台进">
+<meta property="og:updated_time" content="2015-11-10T09:10:19.000Z">
 <meta name="twitter:card" content="summary">
-<meta name="twitter:title" content="使用SharedPreferences 需要注意的一点">
-<meta name="twitter:description" content="SharedPreferences是十分常用的一个工具。前几天在写一个功能的时候，发现在一个Activity中保存的信息在另一个Activity中找不到。一直为空，后来看源码才发现获取SharedPreferences是有两种方式
+<meta name="twitter:title" content="Android Process and Thread 整理">
+<meta name="twitter:description" content="所有组件默认在Android系统的main线程  
 
+进程默认所有组件运行在同一个进程中，如果对于组件要选择在那个进程进行，可以在manifest文件中的四个组件元素之下提供android:process属性。    元素之下也可以提供android:process属性，来设置一个对于所有组件的默认的值。 
 
-getPreferences(int mode)
-getSharedPreferences(String name, int mode)
-
-
-我们先看getPref">
+进程生命周期内存不够时，系统会根据进程重要程度杀掉进程。  
+进程重要程度分析：
+前台进">
 
 
 <script type="text/javascript" id="hexo.configuration">
@@ -81,7 +78,7 @@ getSharedPreferences(String name, int mode)
   };
 </script>
 
-    <title> 使用SharedPreferences 需要注意的一点 // canaan's blog </title>
+    <title> Android Process and Thread 整理 // canaan's blog </title>
 </head>
 <body itemscope itemtype="http://schema.org/WebPage" lang="">
 <!--[if lte IE 8]>
@@ -192,7 +189,7 @@ getSharedPreferences(String name, int mode)
           
           
             
-              使用SharedPreferences 需要注意的一点
+              Android Process and Thread 整理
             
           
         </h1>
@@ -201,8 +198,8 @@ getSharedPreferences(String name, int mode)
       <div class="post-meta">
         <span class="post-time">
           發表於
-          <time itemprop="dateCreated" datetime="2015-07-31T11:13:47+08:00" content="2015-07-31">
-            2015-07-31
+          <time itemprop="dateCreated" datetime="2015-11-04T20:21:42+08:00" content="2015-11-04">
+            2015-11-04
           </time>
         </span>
 
@@ -220,42 +217,48 @@ getSharedPreferences(String name, int mode)
       
 
       
-        <span itemprop="articleBody"><p>SharedPreferences是十分常用的一个工具。前几天在写一个功能的时候，发现在一个Activity中保存的信息在另一个Activity中找不到。一直为空，后来看源码才发现获取SharedPreferences是有两种方式</p>
-<blockquote>
+        <span itemprop="articleBody"><p>所有组件默认在Android系统的main线程  </p>
 <ul>
-<li>getPreferences(int mode)</li>
-<li>getSharedPreferences(String name, int mode)</li>
-</ul>
-</blockquote>
-<p>我们先看getPreferences(int mode)源码</p>
-<!-- lang:java-->
-<pre><code>/<span class="keyword">*</span><span class="keyword">*</span>
- <span class="keyword">*</span> Retrieve a {<span class="comment">@link SharedPreferences} object for accessing preferences</span>
- <span class="keyword">*</span> that are private to this activity.  This simply calls the underlying
- <span class="keyword">*</span> {<span class="comment">@link #getSharedPreferences(String, int)} method by passing in this activity's</span>
- <span class="keyword">*</span> class name as the preferences name.
- <span class="keyword">*</span>
- <span class="keyword">*</span> <span class="comment">@param mode Operating mode.  Use {@link #MODE_PRIVATE} for the default</span>
- <span class="keyword">*</span>             operation, {<span class="comment">@link #MODE_WORLD_READABLE} and</span>
- <span class="keyword">*</span>             {<span class="comment">@link #MODE_WORLD_WRITEABLE} to control permissions.</span>
- <span class="keyword">*</span>
- <span class="keyword">*</span> <span class="comment">@return Returns the single SharedPreferences instance that can be used</span>
- <span class="keyword">*</span>         to retrieve and modify the preference values.
- <span class="keyword">*</span>/
-public SharedPreferences getPreferences(int mode) {
-    return getSharedPreferences(getLocalClassName(), mode);
-}
-</code></pre><p>注释中说明了，这个方法获取了一个是当前Activity的私有SharedPreferences对象，并且是获得该类的名字后调用getSharedPreferences(String name, int mode)，将名字作为第一个参数—-名字传入，所以其实在其他activity中使用了当前的activity的类名（不包括包名）也是可以获取的.</p>
-<p>再来讲讲getSharedPreferences(String name, int mode)的第二个参数mode</p>
-<blockquote>
+<li><h3 id="进程">进程</h3><p>默认所有组件运行在同一个进程中，如果对于组件要选择在那个进程进行，可以在manifest文件中的四个组件元素之下提供<code>android:process</code>属性。    <application>元素之下也可以提供<code>android:process</code>属性，来设置一个对于所有组件的默认的值。 </application></p>
 <ul>
-<li>MODE_PRIVATE(只能自己的应用获取的到，如果已存在就替换)</li>
-<li>MODE_APPEND(只能自己的应用获取的到，如果已存在就接在目前数据之后)</li>
-<li>MODE_WORLD_READABLE(其他应用都能获取的到，可读，但是由于数据不安全，已被废弃)</li>
-<li>MODE_WORLD_WRITEABLE(其他应用都能获取的到，可写，但是由于数据不安全，已被废弃)</li>
-<li>MODE_MULTI_PROCESS(在多进程同时访问一个SharedPreferces使用，在Android2.3之前会自动调用，但是2.3之后就必须手动声明)</li>
+<li><h4 id="进程生命周期">进程生命周期</h4><p>内存不够时，系统会根据进程重要程度杀掉进程。  </p>
+<h5 id="进程重要程度分析：">进程重要程度分析：</h5><ul>
+<li><strong>前台进程(最后被杀)</strong>：   <pre><code><span class="bullet">* </span>持有一个与用户交互的Activity（<span class="code">`onResume()`</span>已经被调用） 
+<span class="bullet">* </span>持有一个用户交互的Activity绑定的Service
+<span class="bullet">* </span>持有一个在前台运行的Service
+<span class="bullet">* </span>持有一个正在调用其生命周期回调函数的Service
+<span class="bullet">* </span>持有一个正在执行其<span class="code">`onReceive()`</span>的BroadCast
+</code></pre></li>
+<li><strong>可见进程</strong>  <pre><code>没有前台可见组件，但是仍然能影响用户前台。
+<span class="bullet">* </span>持有一个可见但不是直接与用户交互的Activity(<span class="code">`onPaused()`</span>被调用)
+<span class="bullet">* </span>持有一个与前台Activity绑定的Service
+</code></pre></li>
+<li><strong>Service进程</strong>  <pre><code>持有一个通过调用`<span class="function"><span class="title">startService</span><span class="params">()</span></span>`创建的Service
+</code></pre></li>
+<li><strong>后台进程</strong>  <pre><code>持有一个用户当前并不可见的<span class="function"><span class="title">Activity</span><span class="params">(`onStop()</span></span>`被调用)，系统可以随时杀掉这些进程，来提供内存给前面几种进程。这些进程存放在LRU列表中，保证被杀的是用户最不用的。如果Activity的生命周期函数实现得当的话，杀掉这些进程并不会对用户产生影响，因为在复原Activity时，Activity会复原被杀前保存的可见状态。
+</code></pre></li>
+<li><p><strong>空进程</strong>      </p>
+<pre><code>并没有持有任何活动的组件，这些进程存在的目的是为了缓存，提高组件的下一次启动时间。  
+</code></pre><p>另外，一个进程的重要程度会根据其他与该进程相关的进程的重要程度增加。<br>一个Activity如果执行长时间操作的话，将该操作交给一个Service来做会比开启一个工作线程更好，尤其是如果执行时间比Activity更久。</p>
+</li>
 </ul>
-</blockquote>
+</li>
+</ul>
+</li>
+<li><h3 id="线程">线程</h3><p>  main线程负责传递事件到合适的用户组件去</p>
+<ul>
+<li>不要阻碍ui线程</li>
+<li>不要在ui线程外修改ui<br>Android提供了一些方法在其他线程进入UI线程</li>
+<li><code>Activity.runOnUiThread(Runnable)</code></li>
+<li><code>View.post(Runnable)</code></li>
+<li><p><code>View.postDelayed(Runnable, long)</code></p>
+<p>但对于需要与UI线程的工作线程来说，AsyncTask是个更好的选择.AsyncTask工作在工作线程，然后将结果传至UI线程。</p>
+</li>
+</ul>
+</li>
+<li><h3 id="线程安全方法">线程安全方法</h3><p>  有的方法在多个线程中被调用，容易造成线程不安全。这主要是对于能被远程调用的方法。</p>
+</li>
+</ul>
 </span>
       
     </div>
@@ -273,11 +276,11 @@ public SharedPreferences getPreferences(int mode) {
         <div class="post-nav">
           <div class="post-nav-prev post-nav-item">
             
-              <a href="/2015/09/24/sdk/" rel="prev">面对GFW，更新SDK新方法</a>
-            
           </div>
 
           <div class="post-nav-next post-nav-item">
+            
+              <a href="/2015/11/01/Service/" rel="next">Service 整理</a>
             
           </div>
         </div>
@@ -389,7 +392,7 @@ public SharedPreferences getPreferences(int mode) {
           <div class="post-toc">
             
             
-              <p class="post-toc-empty">此文章未包含目錄</p>
+              <div class="post-toc-content"><ol class="nav"><li class="nav-item nav-level-3"><a class="nav-link" href="#进程"><span class="nav-number">1.</span> <span class="nav-text">进程</span></a><ol class="nav-child"><li class="nav-item nav-level-4"><a class="nav-link" href="#进程生命周期"><span class="nav-number">1.1.</span> <span class="nav-text">进程生命周期</span></a><ol class="nav-child"><li class="nav-item nav-level-5"><a class="nav-link" href="#进程重要程度分析："><span class="nav-number">1.1.1.</span> <span class="nav-text">进程重要程度分析：</span></a></li></ol></li></ol></li><li class="nav-item nav-level-3"><a class="nav-link" href="#线程"><span class="nav-number">2.</span> <span class="nav-text">线程</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#线程安全方法"><span class="nav-number">3.</span> <span class="nav-text">线程安全方法</span></a></li></ol></div>
             
           </div>
           <div class="post-toc-indicator-bottom post-toc-indicator"></div>
