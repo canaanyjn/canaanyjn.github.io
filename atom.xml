@@ -4,7 +4,7 @@
   
   <link href="/atom.xml" rel="self"/>
   <link href="http://yoursite.com/"/>
-  <updated>2015-11-10T09:10:19.000Z</updated>
+  <updated>2015-11-13T07:11:36.000Z</updated>
   <id>http://yoursite.com/</id>
   
   <author>
@@ -13,6 +13,26 @@
   </author>
   
   <generator uri="http://hexo.io/">Hexo</generator>
+  
+  <entry>
+    <title><![CDATA[运行时保存配置]]></title>
+    <link href="http://yoursite.com/2015/11/13/restain%20fragment/"/>
+    <id>http://yoursite.com/2015/11/13/restain fragment/</id>
+    <published>2015-11-13T03:13:47.000Z</published>
+    <updated>2015-11-13T07:11:36.000Z</updated>
+    <content type="html"><![CDATA[<p>一些设备的配置会在运行时发生改变，比如说屏幕的方向，键盘是否可获取，或者语言等。当这些改变发生时，Android会重启正在运行的Activity(先后调用<code>onDestroy</code>,<code>onCreate</code>)；<br>重启能够使Activity重新加载新的参数，但是有的时候有的数据是比较庞大的，比如Bitmap。如果重新加载体验会比较差。Android官方提出了两种解决方式。  </p>
+<ul>
+<li><h3 id="在Retained_Fragment中管理对象">在Retained Fragment中管理对象</h3>  调用<code>setRetaininstance()</code>方法，能控制一个fragment对象在所关联的Activity重启过程中是否保持。这样对象就被加载下来了。默认情况下fragment会随着宿主Activity重启，但是设为true之后，fragment的<code>onDestroy()</code>和<code>onCreate(Bundle)</code>会被跳过，但是<code>onDetach()</code>、<code>onAttach()</code>和<code>onActivityCreated()</code>仍然会被调用。</li>
+<li><h3 id="自己处理参数的改变">自己处理参数的改变</h3>  在AndroidManifest文件中，在activit的<code>android:configChanges=&quot;&quot;</code>中配置你所想要的参数。被设置的参数在改变之后，activity不会重启，这是个很简单的方法，但是配置不同有时候会需要不同的参数，必须自己手动去设置。<code>onConfigurationChanged (Configuration newConfig)</code>中监测新发生的改变，然后手动设置资源。</li>
+</ul>
+]]></content>
+    <summary type="html">
+    <![CDATA[<p>一些设备的配置会在运行时发生改变，比如说屏幕的方向，键盘是否可获取，或者语言等。当这些改变发生时，Android会重启正在运行的Activity(先后调用<code>onDestroy</code>,<code>onCreate</code>)；<br>重启能够使Activ]]>
+    </summary>
+    
+      <category term="android" scheme="http://yoursite.com/tags/android/"/>
+    
+  </entry>
   
   <entry>
     <title><![CDATA[Android Process and Thread 整理]]></title>
