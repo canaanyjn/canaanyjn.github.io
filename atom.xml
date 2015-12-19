@@ -4,7 +4,7 @@
   
   <link href="/atom.xml" rel="self"/>
   <link href="http://yoursite.com/"/>
-  <updated>2015-11-13T07:11:36.000Z</updated>
+  <updated>2015-12-19T16:04:16.000Z</updated>
   <id>http://yoursite.com/</id>
   
   <author>
@@ -13,6 +13,51 @@
   </author>
   
   <generator uri="http://hexo.io/">Hexo</generator>
+  
+  <entry>
+    <title><![CDATA[RxJava —— Subject]]></title>
+    <link href="http://yoursite.com/2015/12/20/RxJava%20%E2%80%94%E2%80%94%20Subject/"/>
+    <id>http://yoursite.com/2015/12/20/RxJava —— Subject/</id>
+    <published>2015-12-20T15:03:42.000Z</published>
+    <updated>2015-12-19T16:04:16.000Z</updated>
+    <content type="html"><![CDATA[<p>这是个很奇怪的类，可以说是Observable和Observer的代理<br>Subject类继承于Observable，同时实现了Observer接口。因此既是一个Observable也是个Observe，所以能被Observer订阅，也可以订阅Observable，也可以将接收来的数据再转发出去。<br>文档中说有四种子类，但是在源码中显示有7种</p>
+<h2 id="AsyncSubject">AsyncSubject</h2><p>AsyncSubject只会在源Observable完成之后，将源Observable的最后一个数据传给Observer</p>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment">//Observe不会收到数据，因为Subjec没有调用onComplete()</span></span><br><span class="line">  AsyncSubject&lt;Object&gt; subject = AsyncSubject.create();</span><br><span class="line">  subject.subscribe(observer);</span><br><span class="line">  subject.onNext(<span class="string">"one"</span>);</span><br><span class="line">  subject.onNext(<span class="string">"two"</span>);</span><br><span class="line">  subject.onNext(<span class="string">"three"</span>);</span><br></pre></td></tr></table></figure>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment">// Observer 只接收到"three"</span></span><br><span class="line">  AsyncSubject&lt;Object&gt; subject = AsyncSubject.create();</span><br><span class="line">  subject.subscribe(observer);</span><br><span class="line">  subject.onNext(<span class="string">"one"</span>);</span><br><span class="line">  subject.onNext(<span class="string">"two"</span>);</span><br><span class="line">  subject.onNext(<span class="string">"three"</span>);</span><br><span class="line">  subject.onCompleted();</span><br></pre></td></tr></table></figure>
+<h2 id="BehaviorSubject">BehaviorSubject</h2><p>BehaviorSubject只会发送离他被订阅最近的一个数据，然后发送之后全部的数据给Observer</p>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment">// Observer 接收到所有事件</span></span><br><span class="line">  BehaviorSubject&lt;Object&gt; subject = BehaviorSubject.create(<span class="string">"default"</span>);</span><br><span class="line">  subject.subscribe(observer);</span><br><span class="line">  subject.onNext(<span class="string">"one"</span>);</span><br><span class="line">  subject.onNext(<span class="string">"two"</span>);</span><br><span class="line">  subject.onNext(<span class="string">"three"</span>);</span><br></pre></td></tr></table></figure>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment">// Observer 只接收到"one","two","three",没收到"zero"</span></span><br><span class="line">  BehaviorSubject&lt;Object&gt; subject = BehaviorSubject.create(<span class="string">"default"</span>);</span><br><span class="line">  subject.onNext(<span class="string">"zero"</span>);</span><br><span class="line">  subject.onNext(<span class="string">"one"</span>);</span><br><span class="line">  subject.subscribe(observer);</span><br><span class="line">  subject.onNext(<span class="string">"two"</span>);</span><br><span class="line">  subject.onNext(<span class="string">"three"</span>);</span><br></pre></td></tr></table></figure>
+<p>BehaviorSubject.oncreate()中传入一个defaultValue，这个认值会第一个被发送给Observer只要BahaviorSubject还没有接收到任何来自源Observable。</p>
+<h2 id="PublishSubject">PublishSubject</h2><p>PublishSubject只会把在订阅时间点之后的源Observable的数据发送给Observer。</p>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br></pre></td><td class="code"><pre><span class="line">PublishSubject&lt;Object&gt; subject = PublishSubject.create();</span><br><span class="line">  <span class="comment">// observer1 收到所有数据</span></span><br><span class="line">  subject.subscribe(observer1);</span><br><span class="line">  subject.onNext(<span class="string">"one"</span>);</span><br><span class="line">  subject.onNext(<span class="string">"two"</span>);</span><br><span class="line">  <span class="comment">// observer2 只收到"three"和onCompeleted()</span></span><br><span class="line">  subject.subscribe(observer2);</span><br><span class="line">  subject.onNext(<span class="string">"three"</span>);</span><br><span class="line">  subject.onCompleted();</span><br></pre></td></tr></table></figure>
+<p>这里要注意一点是observer2的这种情况，容易造成数据的丢失。</p>
+<h2 id="ReplaySubject">ReplaySubject</h2><p>ReplaySubject会发射所有的数据给Observer，无论是何时订阅.</p>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br></pre></td><td class="code"><pre><span class="line">ReplaySubject&lt;Object&gt; subject = ReplaySubject.create();</span><br><span class="line">  subject.onNext(<span class="string">"one"</span>);</span><br><span class="line">  subject.onNext(<span class="string">"two"</span>);</span><br><span class="line">  subject.onNext(<span class="string">"three"</span>);</span><br><span class="line">  subject.onCompleted();</span><br><span class="line">  <span class="comment">// 两个observer都会接收到所有的数据</span></span><br><span class="line">  subject.subscribe(observer1);</span><br><span class="line">  subject.subscribe(observer2);</span><br></pre></td></tr></table></figure>
+<p>ReplaySubject有多种构造方法，每种决定了不同的策略来决定何时抛弃掉一些缓存</p>
+<ul>
+<li>create();<br>默认设定缓存列表大小为16，如果达到了这么大，将会按需增长，一般增长50%。但是随着不断有新的数据加进来，队列重新分配，复制频率太高等会影响效率。</li>
+<li>create();<br>根据你的估计来设定队列的大小，能较好的避免队列的重分配频率  </li>
+<li>createUnbounded();<br>主要是测试用的一个方法，让你估计队列需要的大小，不需要去考虑抛弃策略</li>
+<li>createWithSize(int size);<br>设定队列最大容量，如果超出，就抛弃掉最老的数据。如果订阅的ReplaySubject已经停止了，会发送停止前size大小的数据</li>
+<li>createWithTime();<ul>
+<li>以时间为边界的队列，每个数据会有一个时间戳，如果超过这个时间戳那就会被抛弃掉。</li>
+<li>如果该subject停止了，那么之后订阅的Observer会收到在停止之后仍存留在缓存中的数据，并且无视时间。</li>
+<li>如果一个Observer订阅了还未停止的Subject，他将只接收到在规定时间内的数据</li>
+<li>注意，onError()和onCompleted()也会触发丢弃数据的动作。</li>
+</ul>
+</li>
+</ul>
+<h2 id="SerializedSubject">SerializedSubject</h2><p>封装Subject，这样能避免在不同线程下调用onNext()的不同步危险。</p>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">mySafeSubject = <span class="keyword">new</span> SerializedSubject( myUnsafeSubject );</span><br></pre></td></tr></table></figure>
+<h2 id="TestSubject">TestSubject</h2><p>一种Subject，主要是测试用。通过使用TestScheduler来精准的控制一定时间的延迟来通知Subject的订阅者相关事件。</p>
+]]></content>
+    <summary type="html">
+    <![CDATA[<p>这是个很奇怪的类，可以说是Observable和Observer的代理<br>Subject类继承于Observable，同时实现了Observer接口。因此既是一个Observable也是个Observe，所以能被Observer订阅，也可以订阅Observable，也可]]>
+    </summary>
+    
+      <category term="android" scheme="http://yoursite.com/tags/android/"/>
+    
+  </entry>
   
   <entry>
     <title><![CDATA[运行时保存配置]]></title>

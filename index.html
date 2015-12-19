@@ -172,6 +172,76 @@
           
           
             
+              <a class="post-title-link" href="/2015/12/20/RxJava —— Subject/" itemprop="url">
+                RxJava —— Subject
+              </a>
+            
+          
+        </h1>
+      
+
+      <div class="post-meta">
+        <span class="post-time">
+          發表於
+          <time itemprop="dateCreated" datetime="2015-12-20T23:03:42+08:00" content="2015-12-20">
+            2015-12-20
+          </time>
+        </span>
+
+        
+
+        
+          
+        
+      </div>
+    </header>
+
+    <div class="post-body">
+
+      
+      
+
+      
+        
+          <span itemprop="articleBody">
+            
+            这是个很奇怪的类，可以说是Observable和Observer的代理Subject类继承于Observable，同时实现了Observer接口。因此既是一个Observable也是个Observe，所以能被Observer订阅，也可以订阅Observable，也可以将接收来的数据再转发出去。文档中
+            ...
+          </span>
+          <div class="post-more-link text-center">
+            <a class="btn" href="/2015/12/20/RxJava —— Subject/#more" rel="contents">
+              閱讀全文 &raquo;
+            </a>
+          </div>
+        
+      
+    </div>
+
+    <footer class="post-footer">
+      
+
+      
+
+      
+      
+        <div class="post-eof"></div>
+      
+    </footer>
+  </article>
+
+
+    
+      
+
+  <article class="post post-type-normal " itemscope itemtype="http://schema.org/Article">
+    <header class="post-header">
+
+      
+      
+        <h1 class="post-title" itemprop="name headline">
+          
+          
+            
               <a class="post-title-link" href="/2015/11/13/restain fragment/" itemprop="url">
                 运行时保存配置
               </a>
@@ -203,12 +273,16 @@
 
       
         
-          <span itemprop="articleBody"><p>一些设备的配置会在运行时发生改变，比如说屏幕的方向，键盘是否可获取，或者语言等。当这些改变发生时，Android会重启正在运行的Activity(先后调用<code>onDestroy</code>,<code>onCreate</code>)；<br>重启能够使Activity重新加载新的参数，但是有的时候有的数据是比较庞大的，比如Bitmap。如果重新加载体验会比较差。Android官方提出了两种解决方式。  </p>
-<ul>
-<li><h3 id="在Retained_Fragment中管理对象">在Retained Fragment中管理对象</h3>  调用<code>setRetaininstance()</code>方法，能控制一个fragment对象在所关联的Activity重启过程中是否保持。这样对象就被加载下来了。默认情况下fragment会随着宿主Activity重启，但是设为true之后，fragment的<code>onDestroy()</code>和<code>onCreate(Bundle)</code>会被跳过，但是<code>onDetach()</code>、<code>onAttach()</code>和<code>onActivityCreated()</code>仍然会被调用。</li>
-<li><h3 id="自己处理参数的改变">自己处理参数的改变</h3>  在AndroidManifest文件中，在activit的<code>android:configChanges=&quot;&quot;</code>中配置你所想要的参数。被设置的参数在改变之后，activity不会重启，这是个很简单的方法，但是配置不同有时候会需要不同的参数，必须自己手动去设置。<code>onConfigurationChanged (Configuration newConfig)</code>中监测新发生的改变，然后手动设置资源。</li>
-</ul>
-</span>
+          <span itemprop="articleBody">
+            
+            一些设备的配置会在运行时发生改变，比如说屏幕的方向，键盘是否可获取，或者语言等。当这些改变发生时，Android会重启正在运行的Activity(先后调用onDestroy,onCreate)；重启能够使Activity重新加载新的参数，但是有的时候有的数据是比较庞大的，比如Bitmap。如果重新加
+            ...
+          </span>
+          <div class="post-more-link text-center">
+            <a class="btn" href="/2015/11/13/restain fragment/#more" rel="contents">
+              閱讀全文 &raquo;
+            </a>
+          </div>
         
       
     </div>
@@ -269,49 +343,18 @@
 
       
         
-          <span itemprop="articleBody"><p>所有组件默认在Android系统的main线程  </p>
-<ul>
-<li><h3 id="进程">进程</h3><p>默认所有组件运行在同一个进程中，如果对于组件要选择在那个进程进行，可以在manifest文件中的四个组件元素之下提供<code>android:process</code>属性。    <application>元素之下也可以提供<code>android:process</code>属性，来设置一个对于所有组件的默认的值。 </application></p>
-<ul>
-<li><h4 id="进程生命周期">进程生命周期</h4><p>内存不够时，系统会根据进程重要程度杀掉进程。  </p>
-<h5 id="进程重要程度分析：">进程重要程度分析：</h5><ul>
-<li><strong>前台进程(最后被杀)</strong>：   <pre><code><span class="bullet">* </span>持有一个与用户交互的Activity（<span class="code">`onResume()`</span>已经被调用） 
-<span class="bullet">* </span>持有一个用户交互的Activity绑定的Service
-<span class="bullet">* </span>持有一个在前台运行的Service
-<span class="bullet">* </span>持有一个正在调用其生命周期回调函数的Service
-<span class="bullet">* </span>持有一个正在执行其<span class="code">`onReceive()`</span>的BroadCast
-</code></pre></li>
-<li><strong>可见进程</strong>  <pre><code>没有前台可见组件，但是仍然能影响用户前台。
-<span class="bullet">* </span>持有一个可见但不是直接与用户交互的Activity(<span class="code">`onPaused()`</span>被调用)
-<span class="bullet">* </span>持有一个与前台Activity绑定的Service
-</code></pre></li>
-<li><strong>Service进程</strong>  <pre><code>持有一个通过调用`<span class="function"><span class="title">startService</span><span class="params">()</span></span>`创建的Service
-</code></pre></li>
-<li><strong>后台进程</strong>  <pre><code>持有一个用户当前并不可见的<span class="function"><span class="title">Activity</span><span class="params">(`onStop()</span></span>`被调用)，系统可以随时杀掉这些进程，来提供内存给前面几种进程。这些进程存放在LRU列表中，保证被杀的是用户最不用的。如果Activity的生命周期函数实现得当的话，杀掉这些进程并不会对用户产生影响，因为在复原Activity时，Activity会复原被杀前保存的可见状态。
-</code></pre></li>
-<li><p><strong>空进程</strong>      </p>
-<pre><code>并没有持有任何活动的组件，这些进程存在的目的是为了缓存，提高组件的下一次启动时间。  
-</code></pre><p>另外，一个进程的重要程度会根据其他与该进程相关的进程的重要程度增加。<br>一个Activity如果执行长时间操作的话，将该操作交给一个Service来做会比开启一个工作线程更好，尤其是如果执行时间比Activity更久。</p>
-</li>
-</ul>
-</li>
-</ul>
-</li>
-<li><h3 id="线程">线程</h3><p>  main线程负责传递事件到合适的用户组件去</p>
-<ul>
-<li>不要阻碍ui线程</li>
-<li>不要在ui线程外修改ui<br>Android提供了一些方法在其他线程进入UI线程</li>
-<li><code>Activity.runOnUiThread(Runnable)</code></li>
-<li><code>View.post(Runnable)</code></li>
-<li><p><code>View.postDelayed(Runnable, long)</code></p>
-<p>但对于需要与UI线程的工作线程来说，AsyncTask是个更好的选择.AsyncTask工作在工作线程，然后将结果传至UI线程。</p>
-</li>
-</ul>
-</li>
-<li><h3 id="线程安全方法">线程安全方法</h3><p>  有的方法在多个线程中被调用，容易造成线程不安全。这主要是对于能被远程调用的方法。</p>
-</li>
-</ul>
-</span>
+          <span itemprop="articleBody">
+            
+            所有组件默认在Android系统的main线程  
+
+进程默认所有组件运行在同一个进程中，如果对于组件要选择在那个进程进行，可以在manifest文件中的四个组件元素之下提供android:process属性。    元素之下也可以提供android:process属性，来设置一个对于所有组件的默认
+            ...
+          </span>
+          <div class="post-more-link text-center">
+            <a class="btn" href="/2015/11/04/Process&Thread/#more" rel="contents">
+              閱讀全文 &raquo;
+            </a>
+          </div>
         
       
     </div>
@@ -372,59 +415,25 @@
 
       
         
-          <span itemprop="articleBody"><p>—</p>
-<h3 id="功能:">功能:</h3><ul>
-<li>在后台执行长时间的操作  </li>
-<li>提供某些功能给其他应用</li>
-</ul>
-<h3 id="使用Service:">使用Service:</h3><ul>
-<li><h4 id="创建Service:">创建Service:</h4><ul>
-<li><strong>AndroidMainfest中注册service</strong>  </li>
-<li><strong>start</strong> or <strong>bind</strong> or <strong>either</strong><ul>
-<li>started的Service能一直在后台运行，即使start该Service的组件已经被销毁了。started的Service一般只进行一个操作，并且不返回结果给caller。startServices()中传入的Intent最后到达onStartCommand()中。  </li>
-<li>bound的Service能同时绑定多个组件，并且当所有组件都解绑之后，该Service被销毁。该Service能与绑定的组件交互。  </li>
-<li>如果Service同时实现两个回调方法：<code>onStartCommand()</code>(允许组件start该Service),<code>onBind()</code>(允许组件bind该Service)。</li>
-</ul>
-</li>
-<li><strong>使用</strong><code>context.startService()</code><br>如果Service已经在运行了，就会直接调用onStartCommand()，否则会先调用onCreate()再调用onStartCommand()。如果Service没有提供binding，则组件想获得结果必须通过PendingIntent和BroadCast来与传递结果。</li>
-<li><strong>使用</strong><code>context.bindService()</code><br>如果想让组件与Service交互或者让其他应用调用系统的某些功能，使用Bound Service。一定要实现onBind()，并且返回一个继承Binder的IBinder，其中定义了Service与client之间的交互。在client里创建一个ServiceConnection对象，来获取service对象。<br>如果只是想service与activity在可见的时候交互，则在onStart(),onStop()里绑定和解绑。如果需要activity即使在后台停止了也可以接收到来自service的答复，则在onCreate()和onDestroy()中绑定和解绑。一般不要在onResume()和onPause()中绑定和解绑。    </li>
-</ul>
-</li>
-<li><h4 id="Stopping_a_Service">Stopping a Service</h4><ul>
-<li>bound的Service在所有绑定的组件解绑之后就会自动消除，调用onUnBind()，如果返回true，则在下一个client绑定该Service时调用onRebind()方法。</li>
-<li>started的Service的生命周期需要手动去管理，通过Service自己调用stopSelf()或者其他组件调用。在Service的所有任务完成之后就要销毁该Service，否则会一直在后台运行占用着资源，消耗电池。当停止Service时，如果还有任务正在执行，就会造成丢失，所以停止Service可以选择调用stopSelf(),并且传开始的请求的id，如果正在执行的请求的id与传入的id不符，Service将不会停止。</li>
-</ul>
-</li>
-<li><h4 id="Service_生命周期">Service 生命周期</h4><img src="http://developer.android.com/images/service_lifecycle.png" alt=""></li>
-</ul>
-<h3 id="Service与IntentService">Service与IntentService</h3><ul>
-<li><p>继承IntentService  </p>
-<ul>
-<li>IntendService中维护着一个工作线程去执行所有onStartCommand()中的任务  </li>
-<li>维护着一个工作队列一次发送一个intent到onHandleIntent()，所有的任务完成之后就会停止Service</li>
-<li>onBind()方法中默认返回null，说明其他组件无法bind该Service</li>
-<li><p>实现了onStartCommand()，发送intent到工作队列，然后到onHandleIntent()。</p>
-<p><strong>总之我们只用实现onHandleIntent()</strong>,如果需要重写其他回调函数，记得要调用父类的实现，免得功能失效。</p>
-</li>
-</ul>
-</li>
-<li>继承Service<ul>
-<li>如果需要有多线程，使用继承Service</li>
-<li>onStartCommand()一定要返回一个Integer，其值为三个值之一：  <ul>
-<li>START_NOT_STICKY（被杀了不重启）  </li>
-<li>START_STICKY(被杀了重启但不再次发送最后个intent)  </li>
-<li>START_REDELIVER_INTENT(被杀了重启但且再次发送最后个intent)</li>
-</ul>
-</li>
-</ul>
-</li>
-</ul>
-<h3 id="AIDL">AIDL</h3><p>只有当你允许不同的应用访问你的Service来进行进程间通信并且在service中需要维护多线程时才使用AIDL。如果不需要在不同应用中执行并发的进程间通信，你就该通过实现Binder来创建自己的接口或者如果需要执行进程间通信，但是不需要在service处理中多线程，只需要使用Messenger来实现你的接口。  </p>
-<h3 id="TIPs:">TIPs:</h3><ul>
-<li>如果Service中要进行CPU密集型操作或者阻塞式操作，需要维护一个Service自己的线程来做这些操作。IntentService有自己的线程。</li>
-<li>不要直接调用onStartCommand()，这是系统的事儿。</li>
-</ul>
-</span>
+          <span itemprop="articleBody">
+            
+            —
+功能:
+在后台执行长时间的操作  
+提供某些功能给其他应用
+
+使用Service:
+创建Service:
+AndroidMainfest中注册service  
+start or bind or either
+started的Service能一直在后台运行，即使start该Service的组件已
+            ...
+          </span>
+          <div class="post-more-link text-center">
+            <a class="btn" href="/2015/11/01/Service/#more" rel="contents">
+              閱讀全文 &raquo;
+            </a>
+          </div>
         
       
     </div>
@@ -485,60 +494,20 @@
 
       
         
-          <span itemprop="articleBody"><h4 id="流程:">流程:</h4><ul>
-<li>调用Volley.newRequestQueue获得requestQueue对象<ul>
-<li>如果不传入httpStack参数，则根据系统版本来创建httpStcak</li>
-<li>根据创建的httpStack创建NetWork</li>
-<li>queue.start()，其中默认创建了四个NetWorkDispatcher和一个CacheDispatcher</li>
-</ul>
-</li>
-<li>add() 创建request对象加入到requestQueue中<ul>
-<li>判断是否可以缓存</li>
-<li>可以则加入到缓存队列，否则加入网络请求队列<ul>
-<li>若加入缓存队列，先在缓存中找相应的缓存结果。如果没有命中，加入到网络请求队列中</li>
-<li>若是命中，判断缓存是否过期，若过期，加入到网络请求队列</li>
-<li>若没有过期，则直接使用缓存数据</li>
-</ul>
-</li>
-<li>若加入到网络请求队列<ul>
-<li>发送网络请求是通过BasicNetwork的performRequest()</li>
-<li>其中通过httpStack来请求网络，并返回一个NetworkResponse对象</li>
-<li>解析数据交给request中的parseNetworkResponse()方法，该方法需要重写，对于不同的返回对象有不同的解析方式</li>
-<li>解析完成之后，调用ExecutorDelivery的postResponse()，回调解析的数据。通过在一个关联主线程的Runnable对象中，保证run()在主线程运行</li>
-<li>在run()中调用了Request的deliverResponse()方法，在该方法中奖相应的数据回调给Response.Listener的onResponse()方法</li>
-</ul>
-</li>
-</ul>
-</li>
-<li><strong>over</strong></li>
-</ul>
-<h4 id="优点和特点:">优点和特点:</h4><ul>
-<li>扩展性高，可以自定义httpStack，request，缓存。框架的耦合度很低。</li>
-<li>会自动重试</li>
-<li>维护了一个byte[]回收池，减少了内存的分配回收</li>
-<li>缓存：  <ul>
-<li>根据Cache-Control和Expires首部来计算缓存的过期时间。如果两个首部都存在情况下，以Cache-Control为准。</li>
-<li>利用If-None-Match和If-Modified-Since对过期缓存或者不新鲜缓存，进行请求再验证，并处理 304 响应，更新缓存。</li>
-<li>默认的缓存实现，将缓存以文件的形式存储在 Disk，程序退出后不会丢失。  </li>
-</ul>
-</li>
-</ul>
-<h4 id="缺点：">缺点：</h4><ul>
-<li>只适合小数据的传输</li>
-<li>重试容易造成多次请求，在一次请求超时之后应该取消该请求。</li>
-</ul>
-<h4 id="tips:">tips:</h4><ul>
-<li>ResponseDelivery里维护了一个<strong>关联UI线程消息队列</strong>的Handler：<br><code>Handler mResponseHandler = new Handler(Looper.getMainLooper());</code></li>
-<li><p>HUrlStack中存在一个URLRewriter接口，用于更改之前提供的url。如果参数为null，则表示之前的url已经没用了。</p>
-  <figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">if</span> (mUrlRewriter != <span class="keyword">null</span>) &#123;  </span><br><span class="line">    String rewritten = mUrlRewriter.rewriteUrl(url);  </span><br><span class="line">    <span class="keyword">if</span> (rewritten == <span class="keyword">null</span>) &#123;</span><br><span class="line">        <span class="keyword">throw</span> <span class="keyword">new</span> IOException(<span class="string">"URL blocked by rewriter: "</span> + url);</span><br><span class="line">    &#125;</span><br><span class="line">    url = rewritten;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
-</li>
-<li><p>ByteArrayPool 是一个byte[]回收池，减少了内存的分配和回收。其维护了两个ArrayList，一个根据byte[]的加入时间排序，一个根据byte[]的大小排序。当需要一定大小的内存时，根据大小排序的byte[]数组寻找可去除正好大小的空间，当回收时如果大小超过上限，则从时间list上去掉第一个byte[]。</p>
-</li>
-</ul>
-<blockquote>
-<p>参考：<br>volley源码<br><a href="http://blog.csdn.net/guolin_blog/article/details/17656437" target="_blank" rel="external">http://blog.csdn.net/guolin_blog/article/details/17656437</a><br><a href="http://www.codekk.com/blogs/detail/54cfab086c4761e5001b2542" target="_blank" rel="external">http://www.codekk.com/blogs/detail/54cfab086c4761e5001b2542</a></p>
-</blockquote>
-</span>
+          <span itemprop="articleBody">
+            
+            流程:
+调用Volley.newRequestQueue获得requestQueue对象
+如果不传入httpStack参数，则根据系统版本来创建httpStcak
+根据创建的httpStack创建NetWork
+queue.start()，其中默认创建了四个NetWorkDispatcher和一个C
+            ...
+          </span>
+          <div class="post-more-link text-center">
+            <a class="btn" href="/2015/10/10/volley 源码阅读/#more" rel="contents">
+              閱讀全文 &raquo;
+            </a>
+          </div>
         
       
     </div>
@@ -599,8 +568,17 @@
 
       
         
-          <span itemprop="articleBody"><p>这是一种简单又方便的方法，速度还不错。<br>首先在<strong>ping.chinaz.com/</strong>上ping”<strong>g.cn/</strong>“获取谷歌中国的ip地址，选择最快的一条线路就好了。<br>在SDK配置中，server填ip地址，端口填80。<br>通过这方法，终于能愉快的更新了~<br>参考知乎。</p>
-</span>
+          <span itemprop="articleBody">
+            
+            这是一种简单又方便的方法，速度还不错。首先在ping.chinaz.com/上ping”g.cn/“获取谷歌中国的ip地址，选择最快的一条线路就好了。在SDK配置中，server填ip地址，端口填80。通过这方法，终于能愉快的更新了~参考知乎。
+
+            
+          </span>
+          <div class="post-more-link text-center">
+            <a class="btn" href="/2015/09/24/sdk/#more" rel="contents">
+              閱讀全文 &raquo;
+            </a>
+          </div>
         
       
     </div>
@@ -661,43 +639,20 @@
 
       
         
-          <span itemprop="articleBody"><p>SharedPreferences是十分常用的一个工具。前几天在写一个功能的时候，发现在一个Activity中保存的信息在另一个Activity中找不到。一直为空，后来看源码才发现获取SharedPreferences是有两种方式</p>
-<blockquote>
-<ul>
-<li>getPreferences(int mode)</li>
-<li>getSharedPreferences(String name, int mode)</li>
-</ul>
-</blockquote>
-<p>我们先看getPreferences(int mode)源码</p>
-<!-- lang:java-->
-<pre><code>/<span class="keyword">*</span><span class="keyword">*</span>
- <span class="keyword">*</span> Retrieve a {<span class="comment">@link SharedPreferences} object for accessing preferences</span>
- <span class="keyword">*</span> that are private to this activity.  This simply calls the underlying
- <span class="keyword">*</span> {<span class="comment">@link #getSharedPreferences(String, int)} method by passing in this activity's</span>
- <span class="keyword">*</span> class name as the preferences name.
- <span class="keyword">*</span>
- <span class="keyword">*</span> <span class="comment">@param mode Operating mode.  Use {@link #MODE_PRIVATE} for the default</span>
- <span class="keyword">*</span>             operation, {<span class="comment">@link #MODE_WORLD_READABLE} and</span>
- <span class="keyword">*</span>             {<span class="comment">@link #MODE_WORLD_WRITEABLE} to control permissions.</span>
- <span class="keyword">*</span>
- <span class="keyword">*</span> <span class="comment">@return Returns the single SharedPreferences instance that can be used</span>
- <span class="keyword">*</span>         to retrieve and modify the preference values.
- <span class="keyword">*</span>/
-public SharedPreferences getPreferences(int mode) {
-    return getSharedPreferences(getLocalClassName(), mode);
-}
-</code></pre><p>注释中说明了，这个方法获取了一个是当前Activity的私有SharedPreferences对象，并且是获得该类的名字后调用getSharedPreferences(String name, int mode)，将名字作为第一个参数—-名字传入，所以其实在其他activity中使用了当前的activity的类名（不包括包名）也是可以获取的.</p>
-<p>再来讲讲getSharedPreferences(String name, int mode)的第二个参数mode</p>
-<blockquote>
-<ul>
-<li>MODE_PRIVATE(只能自己的应用获取的到，如果已存在就替换)</li>
-<li>MODE_APPEND(只能自己的应用获取的到，如果已存在就接在目前数据之后)</li>
-<li>MODE_WORLD_READABLE(其他应用都能获取的到，可读，但是由于数据不安全，已被废弃)</li>
-<li>MODE_WORLD_WRITEABLE(其他应用都能获取的到，可写，但是由于数据不安全，已被废弃)</li>
-<li>MODE_MULTI_PROCESS(在多进程同时访问一个SharedPreferces使用，在Android2.3之前会自动调用，但是2.3之后就必须手动声明)</li>
-</ul>
-</blockquote>
-</span>
+          <span itemprop="articleBody">
+            
+            SharedPreferences是十分常用的一个工具。前几天在写一个功能的时候，发现在一个Activity中保存的信息在另一个Activity中找不到。一直为空，后来看源码才发现获取SharedPreferences是有两种方式
+
+
+getPreferences(int mode)
+getShar
+            ...
+          </span>
+          <div class="post-more-link text-center">
+            <a class="btn" href="/2015/07/31/SharedPreferences tips/#more" rel="contents">
+              閱讀全文 &raquo;
+            </a>
+          </div>
         
       
     </div>
@@ -751,7 +706,7 @@ public SharedPreferences getPreferences(int mode) {
         <nav class="site-state motion-element">
           <div class="site-state-item site-state-posts">
             <a href="/archives">
-              <span class="site-state-item-count">6</span>
+              <span class="site-state-item-count">7</span>
               <span class="site-state-item-name">文章</span>
             </a>
           </div>
