@@ -2,6 +2,11 @@
 <urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9">
   
   <url>
+    <loc>http://yoursite.com/2016/01/28/ViewCompat%E5%AD%A6%E4%B9%A0/</loc>
+    <lastmod>2016-01-28T03:48:09.000Z</lastmod>
+  </url>
+  
+  <url>
     <loc>http://yoursite.com/2016/01/28/Process&Thread/</loc>
     <lastmod>2016-01-28T03:43:30.000Z</lastmod>
   </url>
