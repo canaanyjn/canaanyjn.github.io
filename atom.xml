@@ -4,7 +4,7 @@
   
   <link href="/atom.xml" rel="self"/>
   <link href="http://yoursite.com/"/>
-  <updated>2015-12-19T16:04:16.000Z</updated>
+  <updated>2016-01-28T03:43:30.000Z</updated>
   <id>http://yoursite.com/</id>
   
   <author>
@@ -13,6 +13,37 @@
   </author>
   
   <generator uri="http://hexo.io/">Hexo</generator>
+  
+  <entry>
+    <title><![CDATA[通过学习ViewCompat实现向下兼容]]></title>
+    <link href="http://yoursite.com/2016/01/28/Process&Thread/"/>
+    <id>http://yoursite.com/2016/01/28/Process&Thread/</id>
+    <published>2016-01-28T03:43:23.000Z</published>
+    <updated>2016-01-28T03:43:30.000Z</updated>
+    <content type="html"><![CDATA[<p>今天在做PickerColorFB的时候想做一个阴影效果，于是去看FAB的源码，他的阴影是通过<br><figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">mImpl.setElevation(elevation);</span><br></pre></td></tr></table></figure></p>
+<p>来实现，其中的mIpl是<strong>FloatingActionButtonImpl.class</strong>的引用，因为FAB基类是ImageView，类FloatingActionButtonImpl抽象了FAB的独有功能。而mIpl也是根据SDK版本来实现。<br><figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">final</span> <span class="keyword">int</span> sdk = Build.VERSION.SDK_INT;</span><br><span class="line">        <span class="keyword">if</span> (sdk &gt;= <span class="number">21</span>) &#123;</span><br><span class="line">            mImpl = <span class="keyword">new</span> FloatingActionButtonLollipop(<span class="keyword">this</span>, delegate);</span><br><span class="line">        &#125; <span class="keyword">else</span> <span class="keyword">if</span> (sdk &gt;= <span class="number">12</span>) &#123;</span><br><span class="line">            mImpl = <span class="keyword">new</span> FloatingActionButtonHoneycombMr1(<span class="keyword">this</span>, delegate);</span><br><span class="line">        &#125; <span class="keyword">else</span> &#123;</span><br><span class="line">            mImpl = <span class="keyword">new</span> FloatingActionButtonEclairMr1(<span class="keyword">this</span>, delegate);</span><br><span class="line">        &#125;</span><br></pre></td></tr></table></figure></p>
+<p>我们先去看FloatingActionButtonLollipop.class的代码<br><figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><span class="line"><span class="annotation">@Override</span></span><br><span class="line"><span class="function"><span class="keyword">public</span> <span class="keyword">void</span> <span class="title">setElevation</span><span class="params">(<span class="keyword">float</span> elevation)</span> </span>&#123;</span><br><span class="line">    ViewCompat.setElevation(mView, elevation);</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure></p>
+<p>他是通过调用ViewCompat.setElevation()来实现。那ViewCompat又是一个什么类呢。从名字就可以看出来，这是一个View类的兼容辅助类。</p>
+<blockquote>
+<p>Helper for accessing features in {@link View} introduced after API<br>  level 4 in a backwards compatible fashion.</p>
+</blockquote>
+<p>从该类的注释也可以看出来，这是一个帮助API4以后的方法实现向下兼容的类。<br>ViewCompat跟其他类很不一样的一点就是SDK版本判断。当然方式是一样的，但位置不同。<br><figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">static</span> &#123;</span><br><span class="line">        <span class="keyword">final</span> <span class="keyword">int</span> version = android.os.Build.VERSION.SDK_INT;</span><br><span class="line">        <span class="keyword">if</span> (version &gt;= <span class="number">23</span>) &#123;</span><br><span class="line">            IMPL = <span class="keyword">new</span> MarshmallowViewCompatImpl();</span><br><span class="line">        &#125; <span class="keyword">else</span> <span class="keyword">if</span> (version &gt;= <span class="number">21</span>) &#123;</span><br><span class="line">            IMPL = <span class="keyword">new</span> LollipopViewCompatImpl();</span><br><span class="line">        &#125; <span class="keyword">else</span> <span class="keyword">if</span> (version &gt;= <span class="number">19</span>) &#123;</span><br><span class="line">            IMPL = <span class="keyword">new</span> KitKatViewCompatImpl();</span><br><span class="line">        &#125; <span class="keyword">else</span> <span class="keyword">if</span> (version &gt;= <span class="number">17</span>) &#123;</span><br><span class="line">            IMPL = <span class="keyword">new</span> JbMr1ViewCompatImpl();</span><br><span class="line">        &#125; <span class="keyword">else</span> <span class="keyword">if</span> (version &gt;= <span class="number">16</span>) &#123;</span><br><span class="line">            IMPL = <span class="keyword">new</span> JBViewCompatImpl();</span><br><span class="line">        &#125; <span class="keyword">else</span> <span class="keyword">if</span> (version &gt;= <span class="number">15</span>) &#123;</span><br><span class="line">            IMPL = <span class="keyword">new</span> ICSMr1ViewCompatImpl();</span><br><span class="line">        &#125; <span class="keyword">else</span> <span class="keyword">if</span> (version &gt;= <span class="number">14</span>) &#123;</span><br><span class="line">            IMPL = <span class="keyword">new</span> ICSViewCompatImpl();</span><br><span class="line">        &#125; <span class="keyword">else</span> <span class="keyword">if</span> (version &gt;= <span class="number">11</span>) &#123;</span><br><span class="line">            IMPL = <span class="keyword">new</span> HCViewCompatImpl();</span><br><span class="line">        &#125; <span class="keyword">else</span> <span class="keyword">if</span> (version &gt;= <span class="number">9</span>) &#123;</span><br><span class="line">            IMPL = <span class="keyword">new</span> GBViewCompatImpl();</span><br><span class="line">        &#125; <span class="keyword">else</span> <span class="keyword">if</span> (version &gt;= <span class="number">7</span>) &#123;</span><br><span class="line">            IMPL = <span class="keyword">new</span> EclairMr1ViewCompatImpl();</span><br><span class="line">        &#125; <span class="keyword">else</span> &#123;</span><br><span class="line">            IMPL = <span class="keyword">new</span> BaseViewCompatImpl();</span><br><span class="line">        &#125;</span><br><span class="line">    &#125;</span><br></pre></td></tr></table></figure></p>
+<p>将SDK版本初始化在一个static块中，而不是我们常用的方法内。这样在整个应用的生命周期中只用判断一次就可以了。这样我们就得到了不同版本对应的类。但是，很多方法虽然SDK版本不同，但是他们并没有改变，那怎么办。<br>ViewCompat类中定义了一个接口ViewCompatImpl，它包含了基本的方法。同时也定义了一个BaseViewCompatImpl类，它实现了ViewCompatImpl。这就是基本的ViewCompatImpl，然后每个版本的ViewCompatImpl会继承上一个版本的类，如果修改的方法，就覆盖原来的方法。需要新加的就定义一个，这样就实现了向下兼容。<br>每一个最新的版本都含有了原来的方法，这样在一些新版本系统上的机器安装旧版本的应用也不至于找不到原来的方法。如果在旧版本上某些方法有新的实现，则可以修改，这样新版本自然也会改变，保持一致。<br>在每一个版本实现的ViewCompatImpl中，各个新增的方法并不是自己实现，他只是代理，最后实现的是通过（比如说Lollipop）ViewCompatLollipop来实现，这就是复合。<br>回到之前的话题，设置阴影。在Lollipop版本中，最终到最后会由View类的setElevation()方法实现，其中也是通过mRenderNode来实现<br><figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment">/**</span><br><span class="line"> * Sets the base elevation of this view, in pixels.</span><br><span class="line"> *</span><br><span class="line"> * <span class="doctag">@attr</span> ref android.R.styleable#View_elevation</span><br><span class="line"> */</span></span><br><span class="line"><span class="function"><span class="keyword">public</span> <span class="keyword">void</span> <span class="title">setElevation</span><span class="params">(<span class="keyword">float</span> elevation)</span> </span>&#123;</span><br><span class="line">    <span class="keyword">if</span> (elevation != getElevation()) &#123;</span><br><span class="line">        invalidateViewProperty(<span class="keyword">true</span>, <span class="keyword">false</span>);</span><br><span class="line">        mRenderNode.setElevation(elevation);</span><br><span class="line">        invalidateViewProperty(<span class="keyword">false</span>, <span class="keyword">true</span>);</span><br><span class="line"></span><br><span class="line">        invalidateParentIfNeededAndWasQuickRejected();</span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure></p>
+<p>这里关系到硬件加速渲染，毕竟阴影是3d的，以后有时间再学习。<br>在SDK 12-20之间，FloatingActionButtonHoneycombMr1类没有重写setElevation()，所以直接调用父类FloatingActionButtonEclairMr1的setElevation()<br><figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br></pre></td><td class="code"><pre><span class="line"><span class="annotation">@Override</span></span><br><span class="line"><span class="function"><span class="keyword">void</span> <span class="title">setElevation</span><span class="params">(<span class="keyword">float</span> elevation)</span> </span>&#123;</span><br><span class="line">  <span class="keyword">if</span> (mElevation != elevation &amp;&amp; mShadowDrawable != <span class="keyword">null</span>) &#123;</span><br><span class="line">      mShadowDrawable.setShadowSize(elevation, elevation +              mPressedTranslationZ);</span><br><span class="line">      mElevation = elevation;</span><br><span class="line">      updatePadding();</span><br><span class="line">  &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure></p>
+<p>在这个类中实现是通过ShadowDrawableWrapper实现。这个也在以后说，毕竟不是本文重点。</p>
+<p><strong>总结一下</strong></p>
+<ul>
+<li>SDK版本的初始化，如果在应用中很多地方需要判断SDK版本号，不如尝试在工具类中的静态代码块中先初始化，这样就只用初始化一次。尤其是最新的Marshmallow，需要动态获取权限，这就需要判断是否是6.0从而判断需不需要获取权限。</li>
+<li>实现向下兼容，可以先定义一个接口，声明目前的方法，然后通过一个基类来实现该接口。之后每个版本只用实现上一个版本就够了。Android中还有很多Compat类，都是实现向下兼容的辅助类。</li>
+</ul>
+]]></content>
+    <summary type="html">
+    <![CDATA[<p>今天在做PickerColorFB的时候想做一个阴影效果，于是去看FAB的源码，他的阴影是通过<br><figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1]]>
+    </summary>
+    
+      <category term="android" scheme="http://yoursite.com/tags/android/"/>
+    
+  </entry>
   
   <entry>
     <title><![CDATA[RxJava —— Subject]]></title>
@@ -73,65 +104,6 @@
 ]]></content>
     <summary type="html">
     <![CDATA[<p>一些设备的配置会在运行时发生改变，比如说屏幕的方向，键盘是否可获取，或者语言等。当这些改变发生时，Android会重启正在运行的Activity(先后调用<code>onDestroy</code>,<code>onCreate</code>)；<br>重启能够使Activ]]>
-    </summary>
-    
-      <category term="android" scheme="http://yoursite.com/tags/android/"/>
-    
-  </entry>
-  
-  <entry>
-    <title><![CDATA[Android Process and Thread 整理]]></title>
-    <link href="http://yoursite.com/2015/11/04/Process&Thread/"/>
-    <id>http://yoursite.com/2015/11/04/Process&Thread/</id>
-    <published>2015-11-04T12:21:42.000Z</published>
-    <updated>2015-11-10T09:10:19.000Z</updated>
-    <content type="html"><![CDATA[<p>所有组件默认在Android系统的main线程  </p>
-<ul>
-<li><h3 id="进程">进程</h3><p>默认所有组件运行在同一个进程中，如果对于组件要选择在那个进程进行，可以在manifest文件中的四个组件元素之下提供<code>android:process</code>属性。    <application>元素之下也可以提供<code>android:process</code>属性，来设置一个对于所有组件的默认的值。 </application></p>
-<ul>
-<li><h4 id="进程生命周期">进程生命周期</h4><p>内存不够时，系统会根据进程重要程度杀掉进程。  </p>
-<h5 id="进程重要程度分析：">进程重要程度分析：</h5><ul>
-<li><strong>前台进程(最后被杀)</strong>：   <pre><code><span class="bullet">* </span>持有一个与用户交互的Activity（<span class="code">`onResume()`</span>已经被调用） 
-<span class="bullet">* </span>持有一个用户交互的Activity绑定的Service
-<span class="bullet">* </span>持有一个在前台运行的Service
-<span class="bullet">* </span>持有一个正在调用其生命周期回调函数的Service
-<span class="bullet">* </span>持有一个正在执行其<span class="code">`onReceive()`</span>的BroadCast
-</code></pre></li>
-<li><strong>可见进程</strong>  <pre><code>没有前台可见组件，但是仍然能影响用户前台。
-<span class="bullet">* </span>持有一个可见但不是直接与用户交互的Activity(<span class="code">`onPaused()`</span>被调用)
-<span class="bullet">* </span>持有一个与前台Activity绑定的Service
-</code></pre></li>
-<li><strong>Service进程</strong>  <pre><code>持有一个通过调用`<span class="function"><span class="title">startService</span><span class="params">()</span></span>`创建的Service
-</code></pre></li>
-<li><strong>后台进程</strong>  <pre><code>持有一个用户当前并不可见的<span class="function"><span class="title">Activity</span><span class="params">(`onStop()</span></span>`被调用)，系统可以随时杀掉这些进程，来提供内存给前面几种进程。这些进程存放在LRU列表中，保证被杀的是用户最不用的。如果Activity的生命周期函数实现得当的话，杀掉这些进程并不会对用户产生影响，因为在复原Activity时，Activity会复原被杀前保存的可见状态。
-</code></pre></li>
-<li><p><strong>空进程</strong>      </p>
-<pre><code>并没有持有任何活动的组件，这些进程存在的目的是为了缓存，提高组件的下一次启动时间。  
-</code></pre><p>另外，一个进程的重要程度会根据其他与该进程相关的进程的重要程度增加。<br>一个Activity如果执行长时间操作的话，将该操作交给一个Service来做会比开启一个工作线程更好，尤其是如果执行时间比Activity更久。</p>
-</li>
-</ul>
-</li>
-</ul>
-</li>
-<li><h3 id="线程">线程</h3><p>  main线程负责传递事件到合适的用户组件去</p>
-<ul>
-<li>不要阻碍ui线程</li>
-<li>不要在ui线程外修改ui<br>Android提供了一些方法在其他线程进入UI线程</li>
-<li><code>Activity.runOnUiThread(Runnable)</code></li>
-<li><code>View.post(Runnable)</code></li>
-<li><p><code>View.postDelayed(Runnable, long)</code></p>
-<p>但对于需要与UI线程的工作线程来说，AsyncTask是个更好的选择.AsyncTask工作在工作线程，然后将结果传至UI线程。</p>
-</li>
-</ul>
-</li>
-<li><h3 id="线程安全方法">线程安全方法</h3><p>  有的方法在多个线程中被调用，容易造成线程不安全。这主要是对于能被远程调用的方法。</p>
-</li>
-</ul>
-]]></content>
-    <summary type="html">
-    <![CDATA[<p>所有组件默认在Android系统的main线程  </p>
-<ul>
-<li><h3 id="进程">进程</h3><p>默认所有组件运行在同一个进程中，如果对于组件要选择在那个进程进行，可以在manifest文件中的四个组件元素之下提供<code>android:proc]]>
     </summary>
     
       <category term="android" scheme="http://yoursite.com/tags/android/"/>

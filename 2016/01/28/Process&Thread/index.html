@@ -41,19 +41,19 @@
   <link rel="shorticon icon" type="image/x-icon" href="/favicon.ico?v=0.4.4" />
 
 
-<meta name="description" content="这是个很奇怪的类，可以说是Observable和Observer的代理Subject类继承于Observable，同时实现了Observer接口。因此既是一个Observable也是个Observe，所以能被Observer订阅，也可以订阅Observable，也可以将接收来的数据再转发出去。文档中说有四种子类，但是在源码中显示有7种
-AsyncSubjectAsyncSubject只会在源Obs">
+<meta name="description" content="今天在做PickerColorFB的时候想做一个阴影效果，于是去看FAB的源码，他的阴影是通过1mImpl.setElevation(elevation);
+来实现，其中的mIpl是FloatingActionButtonImpl.class的引用，因为FAB基类是ImageView，类FloatingActionButtonImpl抽象了FAB的独有功能。而mIpl也是根据SDK版本来实现。12">
 <meta property="og:type" content="article">
-<meta property="og:title" content="RxJava —— Subject">
-<meta property="og:url" content="http://yoursite.com/2015/12/20/RxJava —— Subject/index.html">
+<meta property="og:title" content="通过学习ViewCompat实现向下兼容">
+<meta property="og:url" content="http://yoursite.com/2016/01/28/Process&Thread/index.html">
 <meta property="og:site_name" content="canaan's blog">
-<meta property="og:description" content="这是个很奇怪的类，可以说是Observable和Observer的代理Subject类继承于Observable，同时实现了Observer接口。因此既是一个Observable也是个Observe，所以能被Observer订阅，也可以订阅Observable，也可以将接收来的数据再转发出去。文档中说有四种子类，但是在源码中显示有7种
-AsyncSubjectAsyncSubject只会在源Obs">
-<meta property="og:updated_time" content="2015-12-19T16:04:16.000Z">
+<meta property="og:description" content="今天在做PickerColorFB的时候想做一个阴影效果，于是去看FAB的源码，他的阴影是通过1mImpl.setElevation(elevation);
+来实现，其中的mIpl是FloatingActionButtonImpl.class的引用，因为FAB基类是ImageView，类FloatingActionButtonImpl抽象了FAB的独有功能。而mIpl也是根据SDK版本来实现。12">
+<meta property="og:updated_time" content="2016-01-28T03:43:30.000Z">
 <meta name="twitter:card" content="summary">
-<meta name="twitter:title" content="RxJava —— Subject">
-<meta name="twitter:description" content="这是个很奇怪的类，可以说是Observable和Observer的代理Subject类继承于Observable，同时实现了Observer接口。因此既是一个Observable也是个Observe，所以能被Observer订阅，也可以订阅Observable，也可以将接收来的数据再转发出去。文档中说有四种子类，但是在源码中显示有7种
-AsyncSubjectAsyncSubject只会在源Obs">
+<meta name="twitter:title" content="通过学习ViewCompat实现向下兼容">
+<meta name="twitter:description" content="今天在做PickerColorFB的时候想做一个阴影效果，于是去看FAB的源码，他的阴影是通过1mImpl.setElevation(elevation);
+来实现，其中的mIpl是FloatingActionButtonImpl.class的引用，因为FAB基类是ImageView，类FloatingActionButtonImpl抽象了FAB的独有功能。而mIpl也是根据SDK版本来实现。12">
 
 
 <script type="text/javascript" id="hexo.configuration">
@@ -63,7 +63,7 @@ AsyncSubjectAsyncSubject只会在源Obs">
   };
 </script>
 
-    <title> RxJava —— Subject // canaan's blog </title>
+    <title> 通过学习ViewCompat实现向下兼容 // canaan's blog </title>
 </head>
 <body itemscope itemtype="http://schema.org/WebPage" lang="">
 <!--[if lte IE 8]>
@@ -174,7 +174,7 @@ AsyncSubjectAsyncSubject只会在源Obs">
           
           
             
-              RxJava —— Subject
+              通过学习ViewCompat实现向下兼容
             
           
         </h1>
@@ -183,8 +183,8 @@ AsyncSubjectAsyncSubject只会在源Obs">
       <div class="post-meta">
         <span class="post-time">
           发表于
-          <time itemprop="dateCreated" datetime="2015-12-20T23:03:42+08:00" content="2015-12-20">
-            2015-12-20
+          <time itemprop="dateCreated" datetime="2016-01-28T11:43:23+08:00" content="2016-01-28">
+            2016-01-28
           </time>
         </span>
 
@@ -202,36 +202,22 @@ AsyncSubjectAsyncSubject只会在源Obs">
       
 
       
-        <span itemprop="articleBody"><p>这是个很奇怪的类，可以说是Observable和Observer的代理<br>Subject类继承于Observable，同时实现了Observer接口。因此既是一个Observable也是个Observe，所以能被Observer订阅，也可以订阅Observable，也可以将接收来的数据再转发出去。<br>文档中说有四种子类，但是在源码中显示有7种</p>
-<h2 id="AsyncSubject">AsyncSubject</h2><p>AsyncSubject只会在源Observable完成之后，将源Observable的最后一个数据传给Observer</p>
-<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment">//Observe不会收到数据，因为Subjec没有调用onComplete()</span></span><br><span class="line">  AsyncSubject&lt;Object&gt; subject = AsyncSubject.create();</span><br><span class="line">  subject.subscribe(observer);</span><br><span class="line">  subject.onNext(<span class="string">"one"</span>);</span><br><span class="line">  subject.onNext(<span class="string">"two"</span>);</span><br><span class="line">  subject.onNext(<span class="string">"three"</span>);</span><br></pre></td></tr></table></figure>
-<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment">// Observer 只接收到"three"</span></span><br><span class="line">  AsyncSubject&lt;Object&gt; subject = AsyncSubject.create();</span><br><span class="line">  subject.subscribe(observer);</span><br><span class="line">  subject.onNext(<span class="string">"one"</span>);</span><br><span class="line">  subject.onNext(<span class="string">"two"</span>);</span><br><span class="line">  subject.onNext(<span class="string">"three"</span>);</span><br><span class="line">  subject.onCompleted();</span><br></pre></td></tr></table></figure>
-<h2 id="BehaviorSubject">BehaviorSubject</h2><p>BehaviorSubject只会发送离他被订阅最近的一个数据，然后发送之后全部的数据给Observer</p>
-<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment">// Observer 接收到所有事件</span></span><br><span class="line">  BehaviorSubject&lt;Object&gt; subject = BehaviorSubject.create(<span class="string">"default"</span>);</span><br><span class="line">  subject.subscribe(observer);</span><br><span class="line">  subject.onNext(<span class="string">"one"</span>);</span><br><span class="line">  subject.onNext(<span class="string">"two"</span>);</span><br><span class="line">  subject.onNext(<span class="string">"three"</span>);</span><br></pre></td></tr></table></figure>
-<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment">// Observer 只接收到"one","two","three",没收到"zero"</span></span><br><span class="line">  BehaviorSubject&lt;Object&gt; subject = BehaviorSubject.create(<span class="string">"default"</span>);</span><br><span class="line">  subject.onNext(<span class="string">"zero"</span>);</span><br><span class="line">  subject.onNext(<span class="string">"one"</span>);</span><br><span class="line">  subject.subscribe(observer);</span><br><span class="line">  subject.onNext(<span class="string">"two"</span>);</span><br><span class="line">  subject.onNext(<span class="string">"three"</span>);</span><br></pre></td></tr></table></figure>
-<p>BehaviorSubject.oncreate()中传入一个defaultValue，这个认值会第一个被发送给Observer只要BahaviorSubject还没有接收到任何来自源Observable。</p>
-<h2 id="PublishSubject">PublishSubject</h2><p>PublishSubject只会把在订阅时间点之后的源Observable的数据发送给Observer。</p>
-<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br></pre></td><td class="code"><pre><span class="line">PublishSubject&lt;Object&gt; subject = PublishSubject.create();</span><br><span class="line">  <span class="comment">// observer1 收到所有数据</span></span><br><span class="line">  subject.subscribe(observer1);</span><br><span class="line">  subject.onNext(<span class="string">"one"</span>);</span><br><span class="line">  subject.onNext(<span class="string">"two"</span>);</span><br><span class="line">  <span class="comment">// observer2 只收到"three"和onCompeleted()</span></span><br><span class="line">  subject.subscribe(observer2);</span><br><span class="line">  subject.onNext(<span class="string">"three"</span>);</span><br><span class="line">  subject.onCompleted();</span><br></pre></td></tr></table></figure>
-<p>这里要注意一点是observer2的这种情况，容易造成数据的丢失。</p>
-<h2 id="ReplaySubject">ReplaySubject</h2><p>ReplaySubject会发射所有的数据给Observer，无论是何时订阅.</p>
-<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br></pre></td><td class="code"><pre><span class="line">ReplaySubject&lt;Object&gt; subject = ReplaySubject.create();</span><br><span class="line">  subject.onNext(<span class="string">"one"</span>);</span><br><span class="line">  subject.onNext(<span class="string">"two"</span>);</span><br><span class="line">  subject.onNext(<span class="string">"three"</span>);</span><br><span class="line">  subject.onCompleted();</span><br><span class="line">  <span class="comment">// 两个observer都会接收到所有的数据</span></span><br><span class="line">  subject.subscribe(observer1);</span><br><span class="line">  subject.subscribe(observer2);</span><br></pre></td></tr></table></figure>
-<p>ReplaySubject有多种构造方法，每种决定了不同的策略来决定何时抛弃掉一些缓存</p>
+        <span itemprop="articleBody"><p>今天在做PickerColorFB的时候想做一个阴影效果，于是去看FAB的源码，他的阴影是通过<br><figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">mImpl.setElevation(elevation);</span><br></pre></td></tr></table></figure></p>
+<p>来实现，其中的mIpl是<strong>FloatingActionButtonImpl.class</strong>的引用，因为FAB基类是ImageView，类FloatingActionButtonImpl抽象了FAB的独有功能。而mIpl也是根据SDK版本来实现。<br><figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">final</span> <span class="keyword">int</span> sdk = Build.VERSION.SDK_INT;</span><br><span class="line">        <span class="keyword">if</span> (sdk &gt;= <span class="number">21</span>) &#123;</span><br><span class="line">            mImpl = <span class="keyword">new</span> FloatingActionButtonLollipop(<span class="keyword">this</span>, delegate);</span><br><span class="line">        &#125; <span class="keyword">else</span> <span class="keyword">if</span> (sdk &gt;= <span class="number">12</span>) &#123;</span><br><span class="line">            mImpl = <span class="keyword">new</span> FloatingActionButtonHoneycombMr1(<span class="keyword">this</span>, delegate);</span><br><span class="line">        &#125; <span class="keyword">else</span> &#123;</span><br><span class="line">            mImpl = <span class="keyword">new</span> FloatingActionButtonEclairMr1(<span class="keyword">this</span>, delegate);</span><br><span class="line">        &#125;</span><br></pre></td></tr></table></figure></p>
+<p>我们先去看FloatingActionButtonLollipop.class的代码<br><figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><span class="line"><span class="annotation">@Override</span></span><br><span class="line"><span class="function"><span class="keyword">public</span> <span class="keyword">void</span> <span class="title">setElevation</span><span class="params">(<span class="keyword">float</span> elevation)</span> </span>&#123;</span><br><span class="line">    ViewCompat.setElevation(mView, elevation);</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure></p>
+<p>他是通过调用ViewCompat.setElevation()来实现。那ViewCompat又是一个什么类呢。从名字就可以看出来，这是一个View类的兼容辅助类。</p>
+<blockquote>
+<p>Helper for accessing features in {@link View} introduced after API<br>  level 4 in a backwards compatible fashion.</p>
+</blockquote>
+<p>从该类的注释也可以看出来，这是一个帮助API4以后的方法实现向下兼容的类。<br>ViewCompat跟其他类很不一样的一点就是SDK版本判断。当然方式是一样的，但位置不同。<br><figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">static</span> &#123;</span><br><span class="line">        <span class="keyword">final</span> <span class="keyword">int</span> version = android.os.Build.VERSION.SDK_INT;</span><br><span class="line">        <span class="keyword">if</span> (version &gt;= <span class="number">23</span>) &#123;</span><br><span class="line">            IMPL = <span class="keyword">new</span> MarshmallowViewCompatImpl();</span><br><span class="line">        &#125; <span class="keyword">else</span> <span class="keyword">if</span> (version &gt;= <span class="number">21</span>) &#123;</span><br><span class="line">            IMPL = <span class="keyword">new</span> LollipopViewCompatImpl();</span><br><span class="line">        &#125; <span class="keyword">else</span> <span class="keyword">if</span> (version &gt;= <span class="number">19</span>) &#123;</span><br><span class="line">            IMPL = <span class="keyword">new</span> KitKatViewCompatImpl();</span><br><span class="line">        &#125; <span class="keyword">else</span> <span class="keyword">if</span> (version &gt;= <span class="number">17</span>) &#123;</span><br><span class="line">            IMPL = <span class="keyword">new</span> JbMr1ViewCompatImpl();</span><br><span class="line">        &#125; <span class="keyword">else</span> <span class="keyword">if</span> (version &gt;= <span class="number">16</span>) &#123;</span><br><span class="line">            IMPL = <span class="keyword">new</span> JBViewCompatImpl();</span><br><span class="line">        &#125; <span class="keyword">else</span> <span class="keyword">if</span> (version &gt;= <span class="number">15</span>) &#123;</span><br><span class="line">            IMPL = <span class="keyword">new</span> ICSMr1ViewCompatImpl();</span><br><span class="line">        &#125; <span class="keyword">else</span> <span class="keyword">if</span> (version &gt;= <span class="number">14</span>) &#123;</span><br><span class="line">            IMPL = <span class="keyword">new</span> ICSViewCompatImpl();</span><br><span class="line">        &#125; <span class="keyword">else</span> <span class="keyword">if</span> (version &gt;= <span class="number">11</span>) &#123;</span><br><span class="line">            IMPL = <span class="keyword">new</span> HCViewCompatImpl();</span><br><span class="line">        &#125; <span class="keyword">else</span> <span class="keyword">if</span> (version &gt;= <span class="number">9</span>) &#123;</span><br><span class="line">            IMPL = <span class="keyword">new</span> GBViewCompatImpl();</span><br><span class="line">        &#125; <span class="keyword">else</span> <span class="keyword">if</span> (version &gt;= <span class="number">7</span>) &#123;</span><br><span class="line">            IMPL = <span class="keyword">new</span> EclairMr1ViewCompatImpl();</span><br><span class="line">        &#125; <span class="keyword">else</span> &#123;</span><br><span class="line">            IMPL = <span class="keyword">new</span> BaseViewCompatImpl();</span><br><span class="line">        &#125;</span><br><span class="line">    &#125;</span><br></pre></td></tr></table></figure></p>
+<p>将SDK版本初始化在一个static块中，而不是我们常用的方法内。这样在整个应用的生命周期中只用判断一次就可以了。这样我们就得到了不同版本对应的类。但是，很多方法虽然SDK版本不同，但是他们并没有改变，那怎么办。<br>ViewCompat类中定义了一个接口ViewCompatImpl，它包含了基本的方法。同时也定义了一个BaseViewCompatImpl类，它实现了ViewCompatImpl。这就是基本的ViewCompatImpl，然后每个版本的ViewCompatImpl会继承上一个版本的类，如果修改的方法，就覆盖原来的方法。需要新加的就定义一个，这样就实现了向下兼容。<br>每一个最新的版本都含有了原来的方法，这样在一些新版本系统上的机器安装旧版本的应用也不至于找不到原来的方法。如果在旧版本上某些方法有新的实现，则可以修改，这样新版本自然也会改变，保持一致。<br>在每一个版本实现的ViewCompatImpl中，各个新增的方法并不是自己实现，他只是代理，最后实现的是通过（比如说Lollipop）ViewCompatLollipop来实现，这就是复合。<br>回到之前的话题，设置阴影。在Lollipop版本中，最终到最后会由View类的setElevation()方法实现，其中也是通过mRenderNode来实现<br><figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment">/**</span><br><span class="line"> * Sets the base elevation of this view, in pixels.</span><br><span class="line"> *</span><br><span class="line"> * <span class="doctag">@attr</span> ref android.R.styleable#View_elevation</span><br><span class="line"> */</span></span><br><span class="line"><span class="function"><span class="keyword">public</span> <span class="keyword">void</span> <span class="title">setElevation</span><span class="params">(<span class="keyword">float</span> elevation)</span> </span>&#123;</span><br><span class="line">    <span class="keyword">if</span> (elevation != getElevation()) &#123;</span><br><span class="line">        invalidateViewProperty(<span class="keyword">true</span>, <span class="keyword">false</span>);</span><br><span class="line">        mRenderNode.setElevation(elevation);</span><br><span class="line">        invalidateViewProperty(<span class="keyword">false</span>, <span class="keyword">true</span>);</span><br><span class="line"></span><br><span class="line">        invalidateParentIfNeededAndWasQuickRejected();</span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure></p>
+<p>这里关系到硬件加速渲染，毕竟阴影是3d的，以后有时间再学习。<br>在SDK 12-20之间，FloatingActionButtonHoneycombMr1类没有重写setElevation()，所以直接调用父类FloatingActionButtonEclairMr1的setElevation()<br><figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br></pre></td><td class="code"><pre><span class="line"><span class="annotation">@Override</span></span><br><span class="line"><span class="function"><span class="keyword">void</span> <span class="title">setElevation</span><span class="params">(<span class="keyword">float</span> elevation)</span> </span>&#123;</span><br><span class="line">  <span class="keyword">if</span> (mElevation != elevation &amp;&amp; mShadowDrawable != <span class="keyword">null</span>) &#123;</span><br><span class="line">      mShadowDrawable.setShadowSize(elevation, elevation +              mPressedTranslationZ);</span><br><span class="line">      mElevation = elevation;</span><br><span class="line">      updatePadding();</span><br><span class="line">  &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure></p>
+<p>在这个类中实现是通过ShadowDrawableWrapper实现。这个也在以后说，毕竟不是本文重点。</p>
+<p><strong>总结一下</strong></p>
 <ul>
-<li>create();<br>默认设定缓存列表大小为16，如果达到了这么大，将会按需增长，一般增长50%。但是随着不断有新的数据加进来，队列重新分配，复制频率太高等会影响效率。</li>
-<li>create();<br>根据你的估计来设定队列的大小，能较好的避免队列的重分配频率  </li>
-<li>createUnbounded();<br>主要是测试用的一个方法，让你估计队列需要的大小，不需要去考虑抛弃策略</li>
-<li>createWithSize(int size);<br>设定队列最大容量，如果超出，就抛弃掉最老的数据。如果订阅的ReplaySubject已经停止了，会发送停止前size大小的数据</li>
-<li>createWithTime();<ul>
-<li>以时间为边界的队列，每个数据会有一个时间戳，如果超过这个时间戳那就会被抛弃掉。</li>
-<li>如果该subject停止了，那么之后订阅的Observer会收到在停止之后仍存留在缓存中的数据，并且无视时间。</li>
-<li>如果一个Observer订阅了还未停止的Subject，他将只接收到在规定时间内的数据</li>
-<li>注意，onError()和onCompleted()也会触发丢弃数据的动作。</li>
+<li>SDK版本的初始化，如果在应用中很多地方需要判断SDK版本号，不如尝试在工具类中的静态代码块中先初始化，这样就只用初始化一次。尤其是最新的Marshmallow，需要动态获取权限，这就需要判断是否是6.0从而判断需不需要获取权限。</li>
+<li>实现向下兼容，可以先定义一个接口，声明目前的方法，然后通过一个基类来实现该接口。之后每个版本只用实现上一个版本就够了。Android中还有很多Compat类，都是实现向下兼容的辅助类。</li>
 </ul>
-</li>
-</ul>
-<h2 id="SerializedSubject">SerializedSubject</h2><p>封装Subject，这样能避免在不同线程下调用onNext()的不同步危险。</p>
-<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">mySafeSubject = <span class="keyword">new</span> SerializedSubject( myUnsafeSubject );</span><br></pre></td></tr></table></figure>
-<h2 id="TestSubject">TestSubject</h2><p>一种Subject，主要是测试用。通过使用TestScheduler来精准的控制一定时间的延迟来通知Subject的订阅者相关事件。</p>
 </span>
       
     </div>
@@ -249,13 +235,11 @@ AsyncSubjectAsyncSubject只会在源Obs">
         <div class="post-nav">
           <div class="post-nav-prev post-nav-item">
             
-              <a href="/2016/01/28/Process&Thread/" rel="prev">通过学习ViewCompat实现向下兼容</a>
-            
           </div>
 
           <div class="post-nav-next post-nav-item">
             
-              <a href="/2015/11/13/restain fragment/" rel="next">运行时保存配置</a>
+              <a href="/2015/12/20/RxJava —— Subject/" rel="next">RxJava —— Subject</a>
             
           </div>
         </div>
@@ -367,7 +351,7 @@ AsyncSubjectAsyncSubject只会在源Obs">
           <div class="post-toc">
             
             
-              <div class="post-toc-content"><ol class="nav"><li class="nav-item nav-level-2"><a class="nav-link" href="#AsyncSubject"><span class="nav-number">1.</span> <span class="nav-text">AsyncSubject</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#BehaviorSubject"><span class="nav-number">2.</span> <span class="nav-text">BehaviorSubject</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#PublishSubject"><span class="nav-number">3.</span> <span class="nav-text">PublishSubject</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#ReplaySubject"><span class="nav-number">4.</span> <span class="nav-text">ReplaySubject</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#SerializedSubject"><span class="nav-number">5.</span> <span class="nav-text">SerializedSubject</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#TestSubject"><span class="nav-number">6.</span> <span class="nav-text">TestSubject</span></a></li></ol></div>
+              <p class="post-toc-empty">此文章未包含目录</p>
             
           </div>
           <div class="post-toc-indicator-bottom post-toc-indicator"></div>
