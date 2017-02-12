@@ -1,0 +1,645 @@
+<!doctype html>
+<html class="theme-next use-motion theme-next-mist">
+<head>
+    
+
+<meta charset="UTF-8"/>
+<meta http-equiv="X-UA-Compatible" content="IE=edge,chrome=1" />
+<meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1"/>
+<meta name="google-site-verification" content="nB6sM8eVnstjUnOAVO_dkNED6ov0i167hv9piNKElB4" />
+
+
+<meta http-equiv="Cache-Control" content="no-transform" />
+<meta http-equiv="Cache-Control" content="no-siteapp" />
+
+
+
+
+
+
+  <link rel="stylesheet" type="text/css" href="/vendors/fancybox/source/jquery.fancybox.css?v=2.1.5"/>
+
+
+
+  <link href='//fonts.googleapis.com/css?family=Lato:300,400,700,400italic&subset=latin,latin-ext' rel='stylesheet' type='text/css'>
+
+
+<link rel="stylesheet" type="text/css" href="/css/main.css?v=0.4.4"/>
+
+
+    <meta name="description" content="canaan's technique blog" />
+
+
+
+  <meta name="keywords" content="android," />
+
+
+
+  <link rel="alternate" href="/atom.xml" title="canaan's blog" type="application/atom+xml" />
+
+
+
+  <link rel="shorticon icon" type="image/x-icon" href="/favicon.ico?v=0.4.4" />
+
+
+<meta name="description" content="随着需求的变化，在一个列表中的内容和列表的使用率也不断增加，如何保证列表在滑动过程中的流畅性对于用户体验有很大的影响，而 RecyclerView 对于 ListView 的一大优势就是其复用机制更加完善，有两层复用，而且给程序员更多的发挥空间。
+LayoutManagerLayoutManager 主要是测量和安置并且复用 RecyclerView 中的 item。LayoutManager 既">
+<meta property="og:type" content="article">
+<meta property="og:title" content="RecyclerView 复用机制">
+<meta property="og:url" content="http://yoursite.com/2017/01/30/RecyclerView 复用机制/index.html">
+<meta property="og:site_name" content="canaan's blog">
+<meta property="og:description" content="随着需求的变化，在一个列表中的内容和列表的使用率也不断增加，如何保证列表在滑动过程中的流畅性对于用户体验有很大的影响，而 RecyclerView 对于 ListView 的一大优势就是其复用机制更加完善，有两层复用，而且给程序员更多的发挥空间。
+LayoutManagerLayoutManager 主要是测量和安置并且复用 RecyclerView 中的 item。LayoutManager 既">
+<meta property="og:updated_time" content="2017-02-12T16:12:32.000Z">
+<meta name="twitter:card" content="summary">
+<meta name="twitter:title" content="RecyclerView 复用机制">
+<meta name="twitter:description" content="随着需求的变化，在一个列表中的内容和列表的使用率也不断增加，如何保证列表在滑动过程中的流畅性对于用户体验有很大的影响，而 RecyclerView 对于 ListView 的一大优势就是其复用机制更加完善，有两层复用，而且给程序员更多的发挥空间。
+LayoutManagerLayoutManager 主要是测量和安置并且复用 RecyclerView 中的 item。LayoutManager 既">
+
+
+<script type="text/javascript" id="hexo.configuration">
+  var CONFIG = {
+    scheme: 'Mist',
+    sidebar: 'post'
+  };
+</script>
+
+    <title> RecyclerView 复用机制 // canaan's blog </title>
+</head>
+<body itemscope itemtype="http://schema.org/WebPage" lang="zh-CN">
+<!--[if lte IE 8]>
+  <div style=' clear: both; height: 59px; padding:0 0 0 15px; position: relative;margin:0 auto;'>
+    <a href="http://windows.microsoft.com/en-US/internet-explorer/products/ie/home?ocid=ie6_countdown_bannercode">
+      <img src="http://7u2nvr.com1.z0.glb.clouddn.com/picouterie.jpg" border="0" height="42" width="820"
+           alt="You are using an outdated browser. For a faster, safer browsing experience, upgrade for free today or use other browser ,like chrome firefox safari."
+           style='margin-left:auto;margin-right:auto;display: block;'/>
+    </a>
+  </div>
+<![endif]-->
+
+
+
+
+<div class="container one-column page-post-detail">
+    <div class="headband"></div>
+    <header id="header" class="header" itemscope itemtype="http://schema.org/WPHeader">
+        <div class="header-inner"><h1 class="site-meta">
+  <span class="logo-line-before"><i></i></span>
+  <a href="/" class="brand" rel="start">
+      <span class="logo">
+        <i class="icon-logo"></i>
+      </span>
+      <span class="site-title">canaan's blog</span>
+  </a>
+  <span class="logo-line-after"><i></i></span>
+</h1>
+
+<div class="site-nav-toggle">
+  <button>
+    <span class="btn-bar"></span>
+    <span class="btn-bar"></span>
+    <span class="btn-bar"></span>
+  </button>
+</div>
+
+<nav class="site-nav">
+  
+
+  
+    <ul id="menu" class="menu ">
+      
+        
+        <li class="menu-item menu-item-home">
+          <a href="/" rel="section">
+            <i class="menu-item-icon icon-home"></i> <br />
+            首頁
+          </a>
+        </li>
+      
+        
+        <li class="menu-item menu-item-categories">
+          <a href="/categories" rel="section">
+            <i class="menu-item-icon icon-categories"></i> <br />
+            分類
+          </a>
+        </li>
+      
+        
+        <li class="menu-item menu-item-archives">
+          <a href="/archives" rel="section">
+            <i class="menu-item-icon icon-archives"></i> <br />
+            歸檔
+          </a>
+        </li>
+      
+        
+        <li class="menu-item menu-item-tags">
+          <a href="/tags" rel="section">
+            <i class="menu-item-icon icon-tags"></i> <br />
+            標籤
+          </a>
+        </li>
+      
+    </ul>
+  
+
+  
+</nav>
+
+
+        </div>
+    </header>
+
+    <main id="main" class="main">
+        <div class="main-inner">
+            <div id="content" class="content">
+                
+
+  <div id="posts" class="posts-expand">
+    
+
+  <article class="post post-type-normal " itemscope itemtype="http://schema.org/Article">
+    <header class="post-header">
+
+      
+      
+        <h1 class="post-title" itemprop="name headline">
+          
+          
+            
+              RecyclerView 复用机制
+            
+          
+        </h1>
+      
+
+      <div class="post-meta">
+        <span class="post-time">
+          發表於
+          <time itemprop="dateCreated" datetime="2017-01-30T19:39:00+08:00" content="2017-01-30">
+            2017-01-30
+          </time>
+        </span>
+
+        
+
+        
+          
+            <span class="post-comments-count">
+              &nbsp; | &nbsp;
+              <a href="/2017/01/30/RecyclerView 复用机制/#comments" itemprop="discussionUrl">
+                <span class="post-comments-count ds-thread-count" data-thread-key="2017/01/30/RecyclerView 复用机制/" itemprop="commentsCount"></span>
+              </a>
+            </span>
+          
+        
+      </div>
+    </header>
+
+    <div class="post-body">
+
+      
+      
+
+      
+        <span itemprop="articleBody"><p>随着需求的变化，在一个列表中的内容和列表的使用率也不断增加，如何保证列表在滑动过程中的流畅性对于用户体验有很大的影响，而 RecyclerView 对于 ListView 的一大优势就是其复用机制更加完善，有两层复用，而且给程序员更多的发挥空间。</p>
+<h2 id="LayoutManager">LayoutManager</h2><p>LayoutManager 主要是测量和安置并且复用 RecyclerView 中的 item。LayoutManager 既然是管理者安置 item，就不得不去管理 item 的复用，因为视图的复用能保证最快速的将界面呈现在用户面前，优化性能。 所以这部分中我们主要是来简单的看下 LayoutManager 的复用逻辑。</p>
+<h3 id="LayoutManager如何回收与利用">LayoutManager如何回收与利用</h3><p>LayoutManager 是一个抽象的类，我们如果要写自定义的LayoutManager 就必须得处理其复用逻辑。可以按照这样的逻辑来管理视图的复用。 要做的就是在所有的子 View 中找出属于屏幕范围外的，然后将其通过<figure class="highlight"><figcaption><span>Recycler 的 getViewForPosition() 来复用回收的 View 之后分别调用以下几个方法来布局</span></figcaption><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">&#10;* ```measureChildWithMargins()```&#65306;&#27979;&#37327;&#23376; View&#10;* ```addView()```&#65306;&#23558;&#23376; View &#21152;&#21040; RecyclerView &#20013;&#10;* ```layoutDecorated()```&#65306;&#24067;&#23616;&#22312;&#23631;&#24149;&#19978;&#30340;&#23376; View&#10;&#10;## Recycler&#10;&#10;Recycler &#31867;&#20027;&#35201;&#26159;&#36127;&#36131;&#31649;&#29702;&#34987;&#26631;&#35760;&#20026;&#38646;&#30862;(Scrapped)&#21644;&#34987;&#20998;&#31163;(detached)&#30340; view&#65292;&#24182;&#19988;&#22797;&#29992;&#36825;&#20123; view&#12290;&#10;&#10;Recycler &#20027;&#35201;&#36127;&#36131;&#22238;&#25910;&#32531;&#23384;&#21644;&#22797;&#29992;&#20004;&#37096;&#20998;&#30340;&#21151;&#33021;&#65292;&#23601;&#20174;&#36825;&#20004;&#26041;&#38754;&#26469;&#20998;&#26512;&#12290;&#22312;&#20998;&#26512;&#20043;&#21069;&#65292;&#25105;&#20204;&#36824;&#26159;&#26377;&#24517;&#35201;&#26469;&#29702;&#35299;&#19979;&#19968;&#20123; Recycler &#20013;&#30340;&#32972;&#26223;&#12290;&#10;&#10;###Detach vs. Remove&#10;&#10;&#24067;&#23616;&#26356;&#26032;&#26102;&#26377;&#20004;&#20010;&#26041;&#27861;&#22788;&#29702;&#24050;&#23384;&#22312;&#30340;&#23376;&#35270;&#22270;&#65306;detach &#21644; remove (&#20998;&#31163;&#21644;&#31227;&#38500;)&#12290;Detach &#26159;&#19968;&#20010;&#36731;&#37327;&#30340;&#35760;&#24405; view &#25805;&#20316;&#12290; &#34987; detach &#30340;&#35270;&#22270;&#22312;&#20320;&#30340;&#20195;&#30721;&#36820;&#22238;&#21069;&#33021;&#22815;&#37325;&#26032;&#36830;&#25509;&#12290;&#21487;&#20197;&#36890;&#36807; Recycler &#22312;&#19981; &#37325;&#26032;&#32465;&#23450;/&#37325;&#26032;&#26500;&#24314; &#23376;&#35270;&#22270;&#30340;&#24773;&#20917;&#19979;&#20462;&#25913;&#24050;&#36830;&#25509;&#23376;&#35270;&#22270;&#30340;&#32034;&#24341;&#12290;&#10;&#10;Remove &#24847;&#21619;&#30528;&#36825;&#20010; view &#24050;&#32463;&#19981;&#38656;&#35201;&#20102;&#12290;&#20219;&#20309;&#34987;&#27704;&#20037;&#31227;&#38500;&#30340; view &#37117;&#24212;&#35813; &#25918;&#21040; Recycler &#20013;&#65292;&#26041;&#20415;&#20197;&#21518;&#37325;&#29992;&#65292;&#19981;&#36807; API &#24182;&#27809;&#26377;&#24378;&#21046;&#35201;&#27714;&#12290; &#34987; remove &#30340;&#35270;&#22270;&#26159;&#21542;&#34987;&#22238;&#25910;&#21462;&#20915;&#20110;&#20320;&#12290;&#10;&#10;###Scrap vs. Recycle&#10;&#10;Recycler &#26377;&#20004;&#32423;&#35270;&#22270;&#32531;&#23384;&#31995;&#32479;&#65306; scrap heap &#21644; recycle pool (&#22403;&#22334;&#22534;&#21644;&#22238;&#25910;&#27744;)&#65292; Scrap heap &#26159;&#19968;&#20010;&#36731;&#37327;&#30340;&#38598;&#21512;&#65292;&#35270;&#22270;&#21487;&#20197;&#19981;&#32463;&#36807;&#36866;&#37197;&#22120;&#30452;&#25509;&#36820;&#22238;&#32473; LayoutManager &#12290;&#36890;&#24120;&#34987; detach &#20294;&#20250;&#22312;&#21516;&#19968;&#24067;&#23616;&#37325;&#26032;&#20351;&#29992;&#30340;&#35270;&#22270;&#20250;&#20020;&#26102;&#20648;&#23384;&#22312;&#36825;&#37324;&#12290;Recycle pool &#23384;&#25918;&#30340; &#26159;&#37027;&#20123;&#20551;&#23450;&#24182;&#27809;&#26377;&#24471;&#21040;&#27491;&#30830;&#25968;&#25454;(&#30456;&#24212;&#20301;&#32622;&#30340;&#25968;&#25454;)&#30340;&#35270;&#22270;&#65292; &#22240;&#27492;&#23427;&#20204;&#37117;&#35201;&#32463;&#36807;&#36866;&#37197;&#22120;&#37325;&#26032;&#32465;&#23450;&#21518;&#25165;&#33021;&#36820;&#22238;&#32473; LayoutManager&#12290;&#10;&#10;### RecyclerView &#22914;&#20309;&#20570;&#21040; Recycle&#10;&#10;&#19968;&#20010;&#24223;&#24323;&#30340; view &#34429;&#28982;&#34987;&#26631;&#35760;&#20026;&#24223;&#24323;&#30340;&#65292;&#20294;&#23427;&#20173;&#28982;&#19982;&#20381;&#38468;&#20110; RecyclerView&#65292;&#21482;&#26159;&#20570;&#20102;&#20010;&#31227;&#38500;&#25110;&#32773;&#22797;&#29992;&#30340;&#26631;&#35760;&#12290;&#10;LayoutManager &#30340; ```removeAndRecycleView()``` &#26041;&#27861;&#35843;&#29992;&#30340;&#23601;&#26159; Recycler &#30340;```recycleView()```&#26469;&#23436;&#25104;&#35270;&#22270;&#30340;&#22238;&#25910;&#12290;&#10;&#10;**Recycler::recycleView(View view)**&#10;&#10;```java&#10;public void recycleView(View view) &#123;&#10;  // This public recycle method tries to make view recycle-able since layout manager&#10;  // intended to recycle this view (e.g. even if it is in scrap or change cache)&#10;  ViewHolder holder = getChildViewHolderInt(view);&#10;  if (holder.isTmpDetached()) &#123;&#10;      removeDetachedView(view, false);&#10;  &#125;&#10;  if (holder.isScrap()) &#123;&#10;      holder.unScrap();&#10;  &#125; else if (holder.wasReturnedFromScrap())&#123;&#10;      holder.clearReturnedFromScrapFlag();&#10;  &#125;&#10;  recycleViewHolderInternal(holder);&#10;&#125;</span><br></pre></td></tr></table></figure></p>
+<p>这个方法先通过 view 获取了 viewHolder 然后调用 recycleViewHolderInternal()。</p>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br><span class="line">37</span><br><span class="line">38</span><br></pre></td><td class="code"><pre><span class="line"><span class="function"><span class="keyword">void</span> <span class="title">recycleViewHolderInternal</span><span class="params">(ViewHolder holder)</span> </span>&#123;</span><br><span class="line">  ···</span><br><span class="line">    <span class="comment">//noinspection unchecked</span></span><br><span class="line">  <span class="keyword">final</span> <span class="keyword">boolean</span> transientStatePreventsRecycling = holder</span><br><span class="line">          .doesTransientStatePreventRecycling();</span><br><span class="line">  <span class="keyword">final</span> <span class="keyword">boolean</span> forceRecycle = mAdapter != <span class="keyword">null</span></span><br><span class="line">          &amp;&amp; transientStatePreventsRecycling</span><br><span class="line">          &amp;&amp; mAdapter.onFailedToRecycleView(holder);</span><br><span class="line">  <span class="keyword">boolean</span> cached = <span class="keyword">false</span>;</span><br><span class="line">  <span class="keyword">boolean</span> recycled = <span class="keyword">false</span>;</span><br><span class="line">  ···</span><br><span class="line">  <span class="keyword">if</span> (forceRecycle || holder.isRecyclable()) &#123;</span><br><span class="line">      <span class="keyword">if</span> (!holder.hasAnyOfTheFlags(ViewHolder.FLAG_INVALID | ViewHolder.FLAG_REMOVED</span><br><span class="line">              | ViewHolder.FLAG_UPDATE)) &#123;</span><br><span class="line">          <span class="comment">// Retire oldest cached view</span></span><br><span class="line">          <span class="keyword">final</span> <span class="keyword">int</span> cachedViewSize = mCachedViews.size();</span><br><span class="line">          <span class="keyword">if</span> (cachedViewSize == mViewCacheMax &amp;&amp; cachedViewSize &gt; <span class="number">0</span>) &#123;</span><br><span class="line">              recycleCachedViewAt(<span class="number">0</span>);</span><br><span class="line">          &#125;</span><br><span class="line">          <span class="keyword">if</span> (cachedViewSize &lt; mViewCacheMax) &#123;</span><br><span class="line">              mCachedViews.add(holder);</span><br><span class="line">              cached = <span class="keyword">true</span>;</span><br><span class="line">          &#125;</span><br><span class="line">      &#125;</span><br><span class="line">      <span class="keyword">if</span> (!cached) &#123;</span><br><span class="line">          addViewHolderToRecycledViewPool(holder);</span><br><span class="line">          recycled = <span class="keyword">true</span>;</span><br><span class="line">      &#125;</span><br><span class="line">  &#125; <span class="keyword">else</span> <span class="keyword">if</span> (DEBUG) &#123;</span><br><span class="line">      Log.d(TAG, <span class="string">"trying to recycle a non-recycleable holder. Hopefully, it will "</span></span><br><span class="line">              + <span class="string">"re-visit here. We are still removing it from animation lists"</span>);</span><br><span class="line">  &#125;</span><br><span class="line">  <span class="comment">// even if the holder is not removed, we still call this method so that it is removed</span></span><br><span class="line">  <span class="comment">// from view holder lists.</span></span><br><span class="line">  mViewInfoStore.removeViewHolder(holder);</span><br><span class="line">  <span class="keyword">if</span> (!cached &amp;&amp; !recycled &amp;&amp; transientStatePreventsRecycling) &#123;</span><br><span class="line">      holder.mOwnerRecyclerView = <span class="keyword">null</span>;</span><br><span class="line">  &#125;</span><br></pre></td></tr></table></figure>
+<p>如果一个 ViewHolder 被标记为 Scrap、tmpDetached 或者 ignore，是不会被回收的，这类的视图是仅仅被加到 mChangedScrap 队列中，因为这些视图还可能马上就会被复用，没有必要将其加到缓存中。<br>Recycler 在回收时会先去判断已经缓存的 View 的数量是否已经达到上限，如果达到上限了，就将最先缓存的 View 加到回收池中。如果此时缓存的 View 的数量没有达到上限就要加到缓存队列中先，这是 RecyclerView 的一级缓存。如果最终没有被成功加到缓存中，就把当前的 ViewHolder 加到下一级缓存中 —— RecycledViewPool。</p>
+<p><strong>Recycler::addViewHolderToRecycledViewPool(holder)</strong></p>
+<figure class="highlight openscad"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br></pre></td><td class="code"><pre><span class="line">void addViewHolderToRecycledViewPool<span class="params">(ViewHolder holder)</span> &#123;</span><br><span class="line">  ViewCompat.setAccessibilityDelegate<span class="params">(holder.itemView, null)</span>;</span><br><span class="line">  dispatchViewRecycled<span class="params">(holder)</span>;</span><br><span class="line">  holder.mOwnerRecyclerView = null;</span><br><span class="line">  getRecycledViewPool<span class="params">()</span>.putRecycledView<span class="params">(holder)</span>;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<p>同时告知相关的组件这个 view 被回收了。所以，最后都是将 View 加到 RecycledViewPool 中。</p>
+<h4 id="RecycledViewPool">RecycledViewPool</h4><figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">private</span> SparseArray&lt;ArrayList&lt;ViewHolder&gt;&gt; mScrap =</span><br><span class="line">                <span class="keyword">new</span> SparseArray&lt;ArrayList&lt;ViewHolder&gt;&gt;();</span><br></pre></td></tr></table></figure>
+<p>RecycledViewPool 实际上就是一个二维链表，其中一个 ViewType 对应于一个列表，每个列表的默认最大值是5。</p>
+<p>RecycledViewPool 最大的特点是能在多个 RecyclerView 之间共享 View 对象。对于一些 ViewPager 加上 RecyclerView 的界面，能够共用相同的 View，减少 View 的创建，能提高不少的性能。</p>
+<h3 id="Recycler_如何复用">Recycler 如何复用</h3><p>复用主要看两个方法</p>
+<ul>
+<li>getViewForPosition(int position, boolean dryRun)<br>  这个方法在 LayoutManager 部分中讲过，对于获取复用的视图都是通过这个方法。<br>  先从一级缓存中拿取 ViewHolder，    如果不存在则从缓存池中获取，从缓存中获取的视图是已经 detached 了，所以必须对该 ViewHolder 重新绑定。最后如果仍然没有获取到 ViewHolder，则通过适配器调用 createViewHolder() 方法。</li>
+<li><p>bindViewToPosition(View view, int position)<br>  一般来说我们应该通过 getViewForPosition() 来获取 View，在这个方法中已经处理了缓存逻辑，并且在这个方法中已经对视图做了绑定，所以基本上 bindViewToPosition()基本用不到。</p>
+<h2 id="如何知道一个_itemView_的回收">如何知道一个 itemView 的回收</h2><p>  RecyclerView::Adapter 中有一个方法叫做<code>onViewRecycled(VH holder)</code>，这个函数会被回调。</p>
+</li>
+</ul>
+<h2 id="参考">参考</h2><p><a href="http://www.jcodecraeer.com/a/anzhuokaifa/androidkaifa/2015/0517/2880.html" target="_blank" rel="external">http://www.jcodecraeer.com/a/anzhuokaifa/androidkaifa/2015/0517/2880.html</a></p>
+</span>
+      
+    </div>
+
+    <footer class="post-footer">
+      
+        <div class="post-tags">
+          
+            <a href="/tags/android/" rel="tag">#android</a>
+          
+        </div>
+      
+
+      
+        <div class="post-nav">
+          <div class="post-nav-prev post-nav-item">
+            
+          </div>
+
+          <div class="post-nav-next post-nav-item">
+            
+              <a href="/2016/01/28/ViewCompat学习/" rel="next">通过学习ViewCompat实现向下兼容</a>
+            
+          </div>
+        </div>
+      
+
+      
+      
+    </footer>
+  </article>
+
+
+
+    <div class="post-spread">
+      
+    </div>
+  </div>
+
+
+            </div>
+
+            
+
+            
+              <div class="comments" id="comments">
+                
+                  <div class="ds-thread" data-thread-key="2017/01/30/RecyclerView 复用机制/"
+                       data-title="RecyclerView 复用机制" data-url="http://yoursite.com/2017/01/30/RecyclerView 复用机制/">
+                  </div>
+                
+              </div>
+            
+        </div>
+
+        
+  
+  <div class="sidebar-toggle">
+    <div class="sidebar-toggle-line-wrap">
+      <span class="sidebar-toggle-line sidebar-toggle-line-first"></span>
+      <span class="sidebar-toggle-line sidebar-toggle-line-middle"></span>
+      <span class="sidebar-toggle-line sidebar-toggle-line-last"></span>
+    </div>
+  </div>
+
+  <aside id="sidebar" class="sidebar">
+    <div class="sidebar-inner">
+
+      
+        <ul class="sidebar-nav motion-element">
+          <li class="sidebar-nav-toc sidebar-nav-active" data-target="post-toc-wrap" >
+            文章目錄
+          </li>
+          <li class="sidebar-nav-overview" data-target="site-overview">
+            本站概覽
+          </li>
+        </ul>
+      
+
+      <section class="site-overview">
+        <div class="site-author motion-element" itemprop="author" itemscope itemtype="http://schema.org/Person">
+          <img class="site-author-image" src="/images/avatar.jpg" alt="canaan" itemprop="image"/>
+          <p class="site-author-name" itemprop="name">canaan</p>
+        </div>
+        <p class="site-description motion-element" itemprop="description">canaan's technique blog</p>
+        <nav class="site-state motion-element">
+          <div class="site-state-item site-state-posts">
+            <a href="/archives">
+              <span class="site-state-item-count">8</span>
+              <span class="site-state-item-name">文章</span>
+            </a>
+          </div>
+
+          <div class="site-state-item site-state-categories">
+            <a href="/categories">
+              <span class="site-state-item-count">0</span>
+              <span class="site-state-item-name">分類</span>
+              </a>
+          </div>
+
+          <div class="site-state-item site-state-tags">
+            <a href="/tags">
+              <span class="site-state-item-count">2</span>
+              <span class="site-state-item-name">標籤</span>
+              </a>
+          </div>
+
+        </nav>
+
+        
+          <div class="feed-link motion-element">
+            <a href="/atom.xml" rel="alternate">
+              <i class="menu-item-icon icon-feed"></i>
+              RSS
+            </a>
+          </div>
+        
+
+        <div class="links-of-author motion-element">
+          
+        </div>
+
+        
+        
+
+        <div class="links-of-author motion-element">
+          
+        </div>
+
+      </section>
+
+      
+        <section class="post-toc-wrap sidebar-panel-active">
+          <div class="post-toc-indicator-top post-toc-indicator"></div>
+          <div class="post-toc">
+            
+            
+              <div class="post-toc-content"><ol class="nav"><li class="nav-item nav-level-2"><a class="nav-link" href="#LayoutManager"><span class="nav-number">1.</span> <span class="nav-text">LayoutManager</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#LayoutManager如何回收与利用"><span class="nav-number">1.1.</span> <span class="nav-text">LayoutManager如何回收与利用</span></a><ol class="nav-child"><li class="nav-item nav-level-4"><a class="nav-link" href="#RecycledViewPool"><span class="nav-number">1.1.1.</span> <span class="nav-text">RecycledViewPool</span></a></li></ol></li><li class="nav-item nav-level-3"><a class="nav-link" href="#Recycler_如何复用"><span class="nav-number">1.2.</span> <span class="nav-text">Recycler 如何复用</span></a></li></ol></li><li class="nav-item nav-level-2"><a class="nav-link" href="#如何知道一个_itemView_的回收"><span class="nav-number">2.</span> <span class="nav-text">如何知道一个 itemView 的回收</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#参考"><span class="nav-number">3.</span> <span class="nav-text">参考</span></a></li></ol></div>
+            
+          </div>
+          <div class="post-toc-indicator-bottom post-toc-indicator"></div>
+        </section>
+      
+
+    </div>
+  </aside>
+
+
+    </main>
+
+    <footer id="footer" class="footer">
+        <div class="footer-inner">
+            <div class="copyright" >
+  
+  &copy; &nbsp; 
+  <span itemprop="copyrightYear">2017</span>
+  <span class="with-love">
+    <i class="icon-heart"></i>
+  </span>
+  <span class="author" itemprop="copyrightHolder">canaan</span>
+</div>
+
+<div class="powered-by">
+  由 <a class="theme-link" href="http://hexo.io">Hexo</a> 強力驅動
+</div>
+
+<div class="theme-info">
+  主題 -
+  <a class="theme-link" href="https://github.com/iissnan/hexo-theme-next">
+    NexT.Mist
+  </a>
+</div>
+
+<script async src="https://dn-lbstatics.qbox.me/busuanzi/2.3/busuanzi.pure.mini.js"></script>
+
+本站总访问量 <span id="busuanzi_value_site_pv"></span> &nbsp&nbsp&nbsp
+您是第<span id="busuanzi_value_site_uv"></span>个来到的小伙伴
+
+
+
+        </div>
+    </footer>
+
+    <div class="back-to-top"></div>
+</div>
+
+<script type="text/javascript" src="/vendors/jquery/index.js?v=2.1.3"></script>
+
+  
+  
+  
+    
+
+  
+    
+  
+
+  <script type="text/javascript">
+    var duoshuoQuery = {short_name:"canaan"};
+    (function() {
+      var ds = document.createElement('script');
+      ds.type = 'text/javascript';ds.async = true;
+      ds.src = (document.location.protocol == 'https:' ? 'https:' : 'http:') + '//static.duoshuo.com/embed.js';
+      ds.charset = 'UTF-8';
+      (document.getElementsByTagName('head')[0]
+      || document.getElementsByTagName('body')[0]).appendChild(ds);
+    })();
+  </script>
+    
+     
+  	<script src="/js/ua-parser.min.js"></script>
+  	<script src="/js/hook-duoshuo.js"></script>
+  
+
+    
+  
+  
+  <script type="text/javascript" src="/vendors/fancybox/source/jquery.fancybox.pack.js"></script>
+  <script type="text/javascript" src="/js/fancy-box.js?v=0.4.4"></script>
+
+
+  <script type="text/javascript" src="/js/helpers.js?v=0.4.4"></script>
+  
+
+  <script type="text/javascript" src="/vendors/velocity/velocity.min.js"></script>
+  <script type="text/javascript" src="/vendors/velocity/velocity.ui.min.js"></script>
+
+  <script type="text/javascript" src="/js/motion_global.js?v=0.4.4" id="motion.global"></script>
+
+
+
+  <script type="text/javascript" src="/js/search-toggle.js"></script>
+
+
+  
+<script type="text/javascript" src="/js/bootstrap.scrollspy.js?v=0.4.4" id="bootstrap.scrollspy.custom"></script>
+
+
+<script type="text/javascript" id="sidebar.toc.highlight">
+  $(document).ready(function () {
+    var tocSelector = '.post-toc';
+    var $tocSelector = $(tocSelector);
+    var activeCurrentSelector = '.active-current';
+
+    $tocSelector
+      .on('activate.bs.scrollspy', function () {
+        var $currentActiveElement = $(tocSelector + ' .active').last();
+
+        removeCurrentActiveClass();
+        $currentActiveElement.addClass('active-current');
+
+        $tocSelector[0].scrollTop = $currentActiveElement.position().top;
+      })
+      .on('clear.bs.scrollspy', function () {
+        removeCurrentActiveClass();
+      });
+
+    function removeCurrentActiveClass () {
+      $(tocSelector + ' ' + activeCurrentSelector)
+        .removeClass(activeCurrentSelector.substring(1));
+    }
+
+    function processTOC () {
+      getTOCMaxHeight();
+      toggleTOCOverflowIndicators();
+    }
+
+    function getTOCMaxHeight () {
+      var height = $('.sidebar').height() -
+                   $tocSelector.position().top -
+                   $('.post-toc-indicator-bottom').height();
+
+      $tocSelector.css('height', height);
+
+      return height;
+    }
+
+    function toggleTOCOverflowIndicators () {
+      tocOverflowIndicator(
+        '.post-toc-indicator-top',
+        $tocSelector.scrollTop() > 0 ? 'show' : 'hide'
+      );
+
+      tocOverflowIndicator(
+        '.post-toc-indicator-bottom',
+        $tocSelector.scrollTop() >= $tocSelector.find('ol').height() - $tocSelector.height() ? 'hide' : 'show'
+      )
+    }
+
+    $(document).on('sidebar.motion.complete', function () {
+      processTOC();
+    });
+
+    $('body').scrollspy({ target: tocSelector });
+    $(window).on('resize', function () {
+      if ( $('.sidebar').hasClass('sidebar-active') ) {
+        processTOC();
+      }
+    });
+
+    onScroll($tocSelector);
+
+    function onScroll (element) {
+      element.on('mousewheel DOMMouseScroll', function (event) {
+          var oe = event.originalEvent;
+          var delta = oe.wheelDelta || -oe.detail;
+
+          this.scrollTop += ( delta < 0 ? 1 : -1 ) * 30;
+          event.preventDefault();
+
+          toggleTOCOverflowIndicators();
+      });
+    }
+
+    function tocOverflowIndicator (indicator, action) {
+      var $indicator = $(indicator);
+      var opacity = action === 'show' ? 0.4 : 0;
+      $indicator.velocity ?
+        $indicator.velocity('stop').velocity({
+          opacity: opacity
+        }, { duration: 100 }) :
+        $indicator.stop().animate({
+          opacity: opacity
+        }, 100);
+    }
+
+  });
+</script>
+
+<script type="text/javascript" id="sidebar.nav">
+  $(document).ready(function () {
+    var html = $('html');
+    var TAB_ANIMATE_DURATION = 200;
+    var hasVelocity = $.isFunction(html.velocity);
+
+    $('.sidebar-nav li').on('click', function () {
+      var item = $(this);
+      var activeTabClassName = 'sidebar-nav-active';
+      var activePanelClassName = 'sidebar-panel-active';
+      if (item.hasClass(activeTabClassName)) {
+        return;
+      }
+
+      var currentTarget = $('.' + activePanelClassName);
+      var target = $('.' + item.data('target'));
+
+      hasVelocity ?
+        currentTarget.velocity('transition.slideUpOut', TAB_ANIMATE_DURATION, function () {
+          target
+            .velocity('stop')
+            .velocity('transition.slideDownIn', TAB_ANIMATE_DURATION)
+            .addClass(activePanelClassName);
+        }) :
+        currentTarget.animate({ opacity: 0 }, TAB_ANIMATE_DURATION, function () {
+          currentTarget.hide();
+          target
+            .stop()
+            .css({'opacity': 0, 'display': 'block'})
+            .animate({ opacity: 1 }, TAB_ANIMATE_DURATION, function () {
+              currentTarget.removeClass(activePanelClassName);
+              target.addClass(activePanelClassName);
+            });
+        });
+
+      item.siblings().removeClass(activeTabClassName);
+      item.addClass(activeTabClassName);
+    });
+
+    $('.post-toc a').on('click', function (e) {
+      e.preventDefault();
+      var targetSelector = escapeSelector(this.getAttribute('href'));
+      var offset = $(targetSelector).offset().top;
+      hasVelocity ?
+        html.velocity('stop').velocity('scroll', {
+          offset: offset  + 'px',
+          mobileHA: false
+        }) :
+        $('html, body').stop().animate({
+          scrollTop: offset
+        }, 500);
+    });
+
+    // Expand sidebar on post detail page by default, when post has a toc.
+    var $tocContent = $('.post-toc-content');
+    if (isDesktop() && CONFIG.sidebar === 'post') {
+      if ($tocContent.length > 0 && $tocContent.html().trim().length > 0) {
+        displaySidebar();
+      }
+    }
+  });
+</script>
+
+
+
+<script type="text/javascript">
+    $(document).ready(function () {
+        if (CONFIG.sidebar === 'always') {
+            displaySidebar();
+        }
+    });
+</script>
+
+
+
+
+
+
+
+
+<!-- lazyload -->
+<script type="text/javascript" src="/js/lazyload.js"></script>
+<script type="text/javascript">
+    jQuery(function () {
+        jQuery("#posts img").lazyload({
+            placeholder: "/images/loading.gif",
+            effect: "fadeIn"
+        });
+    });
+</script>
+</body>
+</html>
